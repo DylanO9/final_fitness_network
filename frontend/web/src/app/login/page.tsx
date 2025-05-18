@@ -95,7 +95,7 @@ export default function Login () {
                     />
                     <button type="submit" className="w-full p-2 rounded-md bg-purple-400 mb-2" disabled={loading}>Log In</button>
                     <p className="text-sm text-muted-foreground">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <Link href="/signup" className="text-fitness-primary hover:underline font-medium text-purple-400">
                             Sign up
                         </Link>
