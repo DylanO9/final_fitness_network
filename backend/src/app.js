@@ -7,7 +7,9 @@ app.use(cors({
     credentials: true,
 }));
 const userRoutes = require('./routes/users');
+const workoutRoutes = require('./routes/workouts');
 
 app.use('/api/users', userRoutes);
+app.use('/api/workouts', workoutRoutes);
 
 module.exports = app;
