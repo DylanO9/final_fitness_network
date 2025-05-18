@@ -10,3 +10,10 @@ CREATE TABLE Users (
     age INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE Workouts (
+    workout_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES Users(user_id) NOT NULL,
+    workout_name VARCHAR(50) UNIQUE NOT NULL,
+    workout_category VARCHAR(50) NOT NULL
+);
