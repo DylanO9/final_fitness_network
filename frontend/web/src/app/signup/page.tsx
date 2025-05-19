@@ -2,8 +2,12 @@
 import Link from "next/link";
 import { useState } from "react"
 import { useRouter } from 'next/navigation';
+import { useAuth } from "../context/AuthContext";
+
 export default function Signup () {
     const router = useRouter();
+    const auth = useAuth();
+    const login = auth?.login;
     const [form, setForm] = useState({ email: '', username: '', password: ''});
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -29,6 +33,11 @@ export default function Signup () {
     
             // Save the JWT token to local storage
             localStorage.setItem('token', data.token);
+
+            // Call the login function from AuthContext
+            if (login) {
+                login(data.user);
+            }
     
             if (data.error) {
                 setError(true);
@@ -44,7 +53,7 @@ export default function Signup () {
             setLoading(false);
 
             // Optionally redirect or update UI
-            router.push('/');
+            router.push('/dashboard');
         }
         catch (error) {
             console.error('There was a problem with the fetch operation:', error);

@@ -4,6 +4,25 @@ const pool = require('../config');
 const bcrypt = require('bcrypt'); // Assuming you use bcrypt for hashing passwords
 const jwt = require('jsonwebtoken'); // Assuming you use JWT for authentication
 
+// Take the user token from authorization header, and give back the user object
+router.get('/me', async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const result = await pool.query('SELECT * FROM Users WHERE user_id = $1', [decoded.user_id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET all users
 router.get('/', async (req, res) => {
   try {
@@ -83,7 +102,7 @@ router.post('/login', async (req, res) => {
         
         // Create JWT token
         const token = jwt.sign(
-            { userId: user.user_id, username: user.username },
+            { user_id: user.user_id, username: user.username },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
