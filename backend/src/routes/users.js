@@ -3,17 +3,12 @@ const router = express.Router();
 const pool = require('../config');
 const bcrypt = require('bcrypt'); // Assuming you use bcrypt for hashing passwords
 const jwt = require('jsonwebtoken'); // Assuming you use JWT for authentication
+const authenticateToken = require('../middlewares/auth'); // Middleware to authenticate token
 
 // Take the user token from authorization header, and give back the user object
-router.get('/me', async (req, res) => {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
-
+router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const result = await pool.query('SELECT * FROM Users WHERE user_id = $1', [decoded.user_id]);
+    const result = await pool.query('SELECT * FROM Users WHERE user_id = $1', [req.user.user_id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
