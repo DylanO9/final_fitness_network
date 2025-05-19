@@ -13,22 +13,34 @@ Simple Express.js API for user management and authentication.
 
 ### GET `/api/users/:username`
 - **Description:** Retrieve a single user by their username.
+- **Path Parameters:**  
+  - `username` (string) - The username of the user to retrieve.
+
+---
+
+### GET `/api/users/me`
+- **Description:** Retrieve the logged-in user's details.
+- **Authentication:** Requires a valid JWT token.
 
 ---
 
 ### POST `/api/users/signup`
 - **Description:** Register a new user account.
 - **Request Body:**  
-  - `username` (string)
-  - `email` (string)
-  - `password` (string)
+  - `username` (string) - The username of the new user.  
+  - `email` (string) - The email of the new user.  
+  - `password` (string) - The password for the new user account.
+- **Response:**  
+  - Returns the created user object and a JWT token.
 
 ---
 
 ### POST `/api/users/login`
 - **Description:** Authenticate a user and receive a JWT token.
 - **Request Body:**  
-  - `username` (string)
-  - `password` (string)
+  - `username` (string) - The username of the user.  
+  - `password` (string) - The password of the user.
+- **Response:**  
+  - Returns the authenticated user object and a JWT token.
 
 ---
