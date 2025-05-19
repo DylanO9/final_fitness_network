@@ -1,12 +1,19 @@
 'use client';
 import Link from "next/link";
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from 'next/navigation';
+import { useAuth } from "../context/AuthContext";
+
 export default function Login () {
+    const auth = useAuth();
+    const login = auth?.login;
     const router = useRouter();
     const [form, setForm] = useState({ username: '', password: ''});
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    console.log('Login page loaded');
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,6 +38,11 @@ export default function Login () {
         // Save the JWT token to local storage
         localStorage.setItem('token', data.token);
 
+        // Call the login function from AuthContext
+        if (login) {
+            login(data.user);
+        }
+
         if (data.error) {
             setError(true);
             setLoading(false);
@@ -38,13 +50,14 @@ export default function Login () {
         }
         // Handle success state here
         console.log('Login successful:', data);
+        console.log('Redirecting to dashboard...');
 
         // Add a one second delay
         await new Promise(resolve => setTimeout(resolve, 1000));
         setLoading(false);
 
         // Optionally redirect or update UI
-        router.push('/');
+        router.push('/dashboard');
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
         setError(true);

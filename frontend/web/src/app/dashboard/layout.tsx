@@ -1,12 +1,14 @@
 import "../globals.css";
 import Link from "next/link";
 import { FaHome, FaRss, FaDumbbell, FaCalendarAlt, FaChalkboardTeacher, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
+import { AuthProvider } from "../context/AuthContext";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   // Data structure to hold navigation names and links
   const navItems = [
     { name: "Home", link: "/dashboard", icon: <FaHome /> },
@@ -19,7 +21,7 @@ export default function DashboardLayout({
     { name: "Logout", link: "/", icon: <FaSignOutAlt /> },
   ];
   return (
-    <>
+    <AuthProvider>
     <header className="sticky top-0 bg-white shadow-md p-4 flex text-2xl justify-between items-center">
       Fitness Hub
     </header>
@@ -42,6 +44,6 @@ export default function DashboardLayout({
         {children}
       </main>
     </div>
-    </>
+    </AuthProvider>
   );
 }
