@@ -44,3 +44,10 @@ Simple Express.js API for user management and authentication.
   - Returns the authenticated user object and a JWT token.
 
 ---
+
+### DELETE `/api/users/`
+- **Description:** Delete the logged-in user's account.
+- **Authentication:** Requires a valid JWT token.
+- **Response:**  
+  - Returns a success message if the user is deleted.  
+  - Returns a 404 error if the user is not found.

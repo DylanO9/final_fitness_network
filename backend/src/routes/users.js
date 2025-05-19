@@ -12,7 +12,7 @@ router.get('/me', authenticateToken, async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.json(result.rows[0]);
+    res.status(200).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -22,7 +22,7 @@ router.get('/me', authenticateToken, async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM Users');
-    res.json(result.rows);
+    res.status(200).json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -36,7 +36,7 @@ router.get('/:username', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.json(result.rows[0]);
+    res.status(200).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -103,7 +103,7 @@ router.post('/login', async (req, res) => {
         );
         
         // Return user data and token
-        res.json({
+        res.status(200).json({
             user: {
                 user_id: user.user_id,
                 username: user.username,
@@ -123,5 +123,20 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// delete user
+router.delete('/', authenticateToken, async (req, res) => {    
+    try {
+        // Delete the user from the database
+        const result = await pool.query('DELETE FROM Users WHERE username = $1 RETURNING *', [req.user.username]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        res.status(200).json({ message: 'User deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 module.exports = router;
