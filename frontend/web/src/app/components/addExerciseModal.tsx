@@ -24,6 +24,7 @@ export default function addExerciseModal({addExercises, setAddExercises, selecte
     // - Function to close modal
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [filteredExercises, setFilteredExercises] = useState<Exercise[]>([]);
+    const [currentSelectedExercises, setCurrentSelectedExercises] = useState<Exercise[]>([]);
 
     useEffect(() => {
         // Fetch the list of exercises from the server
@@ -49,8 +50,17 @@ export default function addExerciseModal({addExercises, setAddExercises, selecte
         fetchExercises();
     }, []);
 
+    const handleAddExercises = () => {
+        // add the currentSelectedExercises to the selectedExercises
+        const newSelectedExercises = [...selectedExercises, ...currentSelectedExercises];
+        setSelectedExercises(newSelectedExercises);
+        setAddExercises(false);
+        setCurrentSelectedExercises([]);
+        setFilteredExercises([]);
+    }
+
     const handleCancel = () => {
-        setSelectedExercises([]);
+        setCurrentSelectedExercises([]);
         setFilteredExercises([]);
         setAddExercises(false);
     };
@@ -82,12 +92,13 @@ export default function addExerciseModal({addExercises, setAddExercises, selecte
                         <input 
                             type="checkbox" 
                             className="mr-2" 
-                            checked={selectedExercises.some((selectedExercise) => selectedExercise.exercise_id === exercise.exercise_id)}
+                            checked={selectedExercises.some((selectedExercise) => selectedExercise.exercise_id === exercise.exercise_id) || currentSelectedExercises.some((selectedExercise) => selectedExercise.exercise_id === exercise.exercise_id)}
                             onChange={(e) => {
                             if (e.target.checked) {
-                                setSelectedExercises([...selectedExercises, exercise]);
+                                setCurrentSelectedExercises([...currentSelectedExercises, exercise]);
                                 console.log("Selected exercises:", selectedExercises);
                             } else {
+                                setCurrentSelectedExercises(currentSelectedExercises.filter((selectedExercise) => selectedExercise.exercise_id !== exercise.exercise_id));
                                 setSelectedExercises(selectedExercises.filter((selectedExercise) => selectedExercise.exercise_id !== exercise.exercise_id));
                             }
                             }} 
@@ -104,10 +115,7 @@ export default function addExerciseModal({addExercises, setAddExercises, selecte
                     <button onClick={() => handleCancel()} className="border border-gray-300 rounded-md py-2 px-4 cursor-pointer font-semibold mt-4">
                     Cancel
                     </button>
-                    <button onClick={() => {
-                    console.log("Selected exercises:", selectedExercises);
-                    setAddExercises(false);
-                    }} className="bg-purple-400 text-white rounded-md py-2 px-4 cursor-pointer font-semibold mt-4">
+                    <button onClick={() => handleAddExercises()} className="bg-purple-400 text-white rounded-md py-2 px-4 cursor-pointer font-semibold mt-4">
                     Add to Workout
                     </button>
                 </div>

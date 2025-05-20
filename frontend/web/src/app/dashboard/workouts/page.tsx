@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import CreateWorkoutModal from "../..//components/createWorkoutModal";
+import EditExerciseModal from "@/app/components/editExerciseModal";
 
 interface Workout {
     workout_id: number;
@@ -12,7 +13,8 @@ interface Workout {
 export default function Workouts () {
     const [creatingWorkout, setCreatingWorkout] = useState(false)
     const [edittingWorkout, setEditingWorkout] = useState(false)
-    const [workouts, setWorkouts] = useState([]);
+    const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
+    const [workouts, setWorkouts] = useState<Workout []>([]);
 
     useEffect(() => {
         // Fetch the list of workouts from the server
@@ -38,7 +40,25 @@ export default function Workouts () {
             }
         };
         fetchWorkouts();
-    }, []);
+    }, [creatingWorkout]);
+
+    const handleDeleteWorkout = async (workout_id: number) => {
+        try {
+            const response = await fetch(`http://localhost:5001/api/workouts/${workout_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            setWorkouts(workouts.filter((workout: Workout) => workout.workout_id !== workout_id));
+        } catch (error) {
+            console.error("Error deleting workout:", error);
+        }
+    };
 
     return (
         <>
@@ -54,13 +74,31 @@ export default function Workouts () {
                     {workouts.map((workout: Workout, index) => (
                     <li key={index} className="border bg-white border-gray-300 rounded-md p-6 shadow-lg transform transition-transform hover:scale-105 flex flex-col justify-between">
                         <h2 className="font-semibold text-xl">{workout.workout_name}</h2>
-                        <button onClick={() => setEditingWorkout(true)} className="bg-purple-400 text-white rounded-md py-2 cursor-pointer font-semibold">Edit</button>
+                        <div className="flex justify-end mt-16">
+                            <button 
+                                onClick={() => handleDeleteWorkout(workout.workout_id)} 
+                                className="bg-red-400 text-white rounded-md py-2 px-4 cursor-pointer font-semibold mr-2"
+                            >
+                                Delete
+                            </button>
+                            <button 
+                                onClick={() => {setEditingWorkout(true); setSelectedWorkout(workout)}} 
+                                className="bg-purple-400 text-white rounded-md py-2 px-4 cursor-pointer font-semibold"
+                            >
+                                Edit
+                            </button>
+                        </div>
                     </li>
                     ))}
                 </ul>
                 {creatingWorkout && (
                     <CreateWorkoutModal creatingWorkout={creatingWorkout} setCreatingWorkout={setCreatingWorkout}/>
                 )}
+
+                {edittingWorkout && selectedWorkout && (
+                    <EditExerciseModal editingExercise={edittingWorkout} setEditingExercise={setEditingWorkout} workout={selectedWorkout}/>
+                )}
+                
             </div>
         </>
     )
