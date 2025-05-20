@@ -25,7 +25,7 @@ export default async function DashboardLayout({
     <header className="sticky top-0 bg-white shadow-md p-4 flex text-2xl justify-between items-center">
       Fitness Hub
     </header>
-    <div className="flex flex-col">
+    <div className="flex flex-row">
       <aside className="w-1/5 bg-white p-4 min-h-screen text-lg">
         <nav className="flex flex-col space-y-2">
           <ul>
@@ -40,7 +40,7 @@ export default async function DashboardLayout({
           </ul>
         </nav>
       </aside>
-      <main className="w-4/5">
+      <main className="w-4/5 p-4 min-h-screen">
         {children}
       </main>
     </div>
