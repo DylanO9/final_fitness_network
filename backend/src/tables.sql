@@ -17,3 +17,17 @@ CREATE TABLE Workouts (
     workout_name VARCHAR(50) UNIQUE NOT NULL,
     workout_category VARCHAR(50) NOT NULL
 );
+
+CREATE TABLE Exercises (
+    exercise_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES Users(user_id) NOT NULL,
+    exercise_name VARCHAR(50) UNIQUE NOT NULL,
+    description TEXT,
+    exercise_category VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Workout_Exercises (
+    workout_exercise_id SERIAL PRIMARY KEY,
+    workout_id INT REFERENCES Workouts(workout_id) NOT NULL,
+    exercise_id INT REFERENCES Exercises(exercise_id) NOT NULL
+);

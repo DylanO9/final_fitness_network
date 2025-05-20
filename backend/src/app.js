@@ -8,8 +8,10 @@ app.use(cors({
 }));
 const userRoutes = require('./routes/users');
 const workoutRoutes = require('./routes/workouts');
+const exerciseRoutes = require('./routes/exercises');
 
 app.use('/api/users', userRoutes);
 app.use('/api/workouts', workoutRoutes);
+app.use('/api/exercises', exerciseRoutes);
 
 module.exports = app;
