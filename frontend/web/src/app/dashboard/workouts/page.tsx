@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from "react";
+import CreateWorkoutModal from "../..//components/createWorkoutModal";
 
 interface Workout {
     workout_id: number;
@@ -53,11 +54,13 @@ export default function Workouts () {
                     {workouts.map((workout: Workout, index) => (
                     <li key={index} className="border bg-white border-gray-300 rounded-md p-6 shadow-lg transform transition-transform hover:scale-105 flex flex-col justify-between">
                         <h2 className="font-semibold text-xl">{workout.workout_name}</h2>
-                        <p>{index} exercises</p>
                         <button onClick={() => setEditingWorkout(true)} className="bg-purple-400 text-white rounded-md py-2 cursor-pointer font-semibold">Edit</button>
                     </li>
                     ))}
                 </ul>
+                {creatingWorkout && (
+                    <CreateWorkoutModal creatingWorkout={creatingWorkout} setCreatingWorkout={setCreatingWorkout}/>
+                )}
             </div>
         </>
     )
