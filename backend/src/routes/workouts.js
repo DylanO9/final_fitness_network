@@ -67,6 +67,17 @@ router.delete('/:workout_id', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized or workout not found' });
     }
 
+    // Delete related entries in workout_exercises table
+    try {
+      await pool.query(
+        `DELETE FROM Workout_Exercises WHERE workout_id = $1`,
+        [workout_id]
+      );
+    } catch (err) {
+      return res.status(500).json({ error: `Failed to delete related exercises: ${err.message}` });
+    }
+
+    // Delete the workout
     const result = await pool.query(
       `DELETE FROM Workouts WHERE workout_id = $1 RETURNING *`,
       [workout_id]
