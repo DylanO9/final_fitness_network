@@ -233,9 +233,6 @@ router.put('/update-exercises', authenticateToken, async (req, res) => {
              WHERE workout_id = $1`,
             [workout_id]
         );
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: 'No exercises found for this workout' });
-        }
 
         // Check if all exercise_ids belong to the user
         const exerciseCheck = await pool.query(
@@ -257,6 +254,25 @@ router.put('/update-exercises', authenticateToken, async (req, res) => {
         }
 
         res.status(200).json({ message: 'Exercise IDs updated successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Create a new exercise that isn't associated with any workout
+router.post('/no-workout', authenticateToken, async (req, res) => {
+    const { workout_id, exercise_name, description, exercise_category } = req.body;
+    try {
+        // Insert the exercise
+        const exerciseResult = await pool.query(
+            `INSERT INTO Exercises (user_id, exercise_name, description, exercise_category)
+             VALUES ($1, $2, $3, $4) RETURNING *`,
+            [req.user.user_id, exercise_name, description, exercise_category]
+        );
+
+        const exercise = exerciseResult.rows[0];
+
+        res.status(201).json(exercise);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
