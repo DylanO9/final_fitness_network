@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import CreateWorkoutModal from "../..//components/createWorkoutModal";
-import EditExerciseModal from "@/app/components/editExerciseModal";
+import EditWorkoutModal from "@/app/components/editWorkoutModal";
 
 interface Workout {
     workout_id: number;
@@ -96,7 +96,7 @@ export default function Workouts () {
                 )}
 
                 {edittingWorkout && selectedWorkout && (
-                    <EditExerciseModal editingExercise={edittingWorkout} setEditingExercise={setEditingWorkout} workout={selectedWorkout}/>
+                    <EditWorkoutModal editingExercise={edittingWorkout} setEditingExercise={setEditingWorkout} workout={selectedWorkout}/>
                 )}
                 
             </div>
