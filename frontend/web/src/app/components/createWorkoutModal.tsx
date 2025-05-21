@@ -23,7 +23,7 @@ export default function CreateWorkoutModal({ setCreatingWorkout}: CreateWorkoutM
         e.preventDefault();
         let workout_id = null;
         try {
-            const response = await fetch('http://localhost:5001/api/workouts', {
+            const response = await fetch('http://172.23.16.1:5001/api/workouts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function CreateWorkoutModal({ setCreatingWorkout}: CreateWorkoutM
 
         // Add exercises to the workout
         try {
-            const response = await fetch('http://localhost:5001/api/exercises/add-existing-exercises', {
+            const response = await fetch('http://172.23.16.1:5001/api/exercises/add-existing-exercises', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

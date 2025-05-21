@@ -9,13 +9,13 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image
+          {/* <Image
             src="/gym-hero.jpg"
             alt="Gym background"
             fill
             className="object-cover opacity-50"
             priority
-          />
+          /> */}
         </div>
         <div className="relative z-10 text-center px-4">
           <motion.h1 

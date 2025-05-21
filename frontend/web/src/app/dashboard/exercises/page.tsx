@@ -25,7 +25,7 @@ export default function Exercises() {
         // Fetch the list of exercises from the server
         const fetchExercises = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/exercises/all', {
+                const response = await fetch('http://172.23.16.1:5001/api/exercises/all', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export default function Exercises() {
 
         try {
             console.log("Creating exercise:", JSON.stringify(exercise));
-            const response = await fetch('http://localhost:5001/api/exercises/no-workout', {
+            const response = await fetch('http://172.23.16.1:5001/api/exercises/no-workout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export default function Exercises() {
 
     const handleDeleteExercise = async (exercise_id: number) => {
         try {
-            const response = await fetch(`http://localhost:5001/api/exercises/${exercise_id}`, {
+            const response = await fetch(`http://172.23.16.1:5001/api/exercises/${exercise_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

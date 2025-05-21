@@ -25,7 +25,7 @@ export default function Login () {
     setLoading(true);
     // Optionally send data to an API route
     try {
-        const response = await fetch('http://localhost:5001/api/users/login', {
+        const response = await fetch('http://172.23.16.1:5001/api/users/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(form),

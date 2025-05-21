@@ -29,7 +29,7 @@ export default function AddExerciseModal({ setAddExercises, selectedExercises, s
         // Fetch the list of exercises from the server
         const fetchExercises = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/exercises/all', {
+                const response = await fetch('http://172.23.16.1:5001/api/exercises/all', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
