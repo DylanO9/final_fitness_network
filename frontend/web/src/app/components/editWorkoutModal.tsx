@@ -21,7 +21,7 @@ interface Workout {
     workout_category: string;
 }
 
-export default function EditWorkoutModal({editingExercise, setEditingExercise, workout}: EditExerciseModalProps) {
+export default function EditWorkoutModal({setEditingExercise, workout}: EditExerciseModalProps) {
     // We need the workout_name, workout_category, and a list of exercises
     const [workoutName, setWorkoutName] = useState(workout.workout_name);
     const [workoutCategory, setWorkoutCategory] = useState(workout.workout_category);
@@ -54,7 +54,7 @@ export default function EditWorkoutModal({editingExercise, setEditingExercise, w
             }
         };
         fetchExercises();
-    }, []);
+    }, [workout.workout_id]);
 
     if (loading) {
         return (
@@ -198,7 +198,7 @@ export default function EditWorkoutModal({editingExercise, setEditingExercise, w
             )}
             <div className="fixed inset-0 bg-black opacity-50"></div>
             {addExercises && (
-                <AddExerciseModal addExercises={addExercises} setAddExercises={setAddExercises} selectedExercises={exercises} setSelectedExercises={setExercises} />
+                <AddExerciseModal setAddExercises={setAddExercises} selectedExercises={exercises} setSelectedExercises={setExercises} />
             )}
         </>
     )

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/app/context/AuthContext';
+import Image from 'next/image';
 
 interface Message {
   message_id: number;
@@ -219,7 +220,7 @@ export default function Messages() {
               <div className="flex items-center space-x-4">
                 <figure className="w-12 h-12 rounded-full bg-[#404040] overflow-hidden flex-shrink-0">
                   {conversation.avatar_url ? (
-                    <img
+                    <Image
                       src={conversation.avatar_url}
                       alt={conversation.username}
                       className="w-full h-full object-cover"
@@ -248,7 +249,7 @@ export default function Messages() {
               <div className="flex items-center space-x-4">
                 <figure className="w-10 h-10 rounded-full bg-[#404040] overflow-hidden flex-shrink-0">
                   {selectedUser.avatar_url ? (
-                    <img
+                    <Image
                       src={selectedUser.avatar_url}
                       alt={selectedUser.username}
                       className="w-full h-full object-cover"
@@ -354,7 +355,7 @@ export default function Messages() {
                 >
                   <figure className="w-10 h-10 rounded-full bg-[#404040] overflow-hidden flex-shrink-0">
                     {friend.avatar_url ? (
-                      <img
+                      <Image
                         src={friend.avatar_url}
                         alt={friend.username}
                         className="w-full h-full object-cover"

@@ -16,7 +16,7 @@ export default async function DashboardLayout({
     { name: "Workouts", link: "/dashboard/workouts", icon: <FaDumbbell /> },
     { name: "Exercises", link: "/dashboard/exercises", icon: <FaDumbbell /> },
     { name: "Calendar", link: "/dashboard/calendar", icon: <FaCalendarAlt /> },
-    { name: "Coaching", link: "/dashboard/coaching", icon: <FaChalkboardTeacher /> },
+    // { name: "Coaching", link: "/dashboard/coaching", icon: <FaChalkboardTeacher /> },
     { name: "Messages", link: "/dashboard/messages", icon: <FaEnvelope /> },
     { name: "Logout", link: "/", icon: <FaSignOutAlt /> },
   ];

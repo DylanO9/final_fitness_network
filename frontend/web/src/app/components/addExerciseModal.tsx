@@ -9,13 +9,12 @@ interface Exercise {
 }
 
 interface AddExerciseModalProps {
-    addExercises: boolean;
     setAddExercises: (value: boolean) => void;
     selectedExercises: Exercise[];
     setSelectedExercises: (value: Exercise[]) => void;
 }
 
-export default function addExerciseModal({addExercises, setAddExercises, selectedExercises, setSelectedExercises}: AddExerciseModalProps) {
+export default function AddExerciseModal({ setAddExercises, selectedExercises, setSelectedExercises}: AddExerciseModalProps) {
     // What data do we need?
     // - List of exercises
     // - Selected exercises

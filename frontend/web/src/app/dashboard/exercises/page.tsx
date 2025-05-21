@@ -171,27 +171,7 @@ export default function Exercises() {
             </thead>
             <tbody>
             {exercises.map((exercise, index) => (
-                <tr key={exercise.exercise_id} className="hover:bg-[#404040] transition duration-200 bg-[#2d2d2d] text-white">
-                <td className="border border-[#404040] px-4 py-2">{exercise.exercise_name}</td>
-                <td className="border border-[#404040] px-4 py-2">{exercise.description}</td>
-                <td className="border border-[#404040] px-4 py-2">{exercise.exercise_category}</td>
-                <td className="border border-[#404040] px-4 py-2 text-center">-</td> {/* Placeholder for sets */}
-                <td className="border border-[#404040] px-4 py-2 text-center">-</td> {/* Placeholder for reps */}
-                <td className="border border-[#404040] px-4 py-2 text-center">
-                <button 
-                className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition duration-200 mr-2"
-                onClick={() => {handleOpenEditModal(exercise.exercise_id, exercise.exercise_name, exercise.description, exercise.exercise_category)}}
-                >
-                    Edit
-                </button>
-                <button
-                    className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200"
-                    onClick={() => {handleDeleteExercise(exercise.exercise_id)}}
-                >
-                    Delete
-                </button>
-                </td>
-                </tr>
+                <tr key={`${exercise.exercise_id}-${index}`} className="hover:bg-[#404040] transition duration-200 bg-[#2d2d2d] text-white"><td className="border border-[#404040] px-4 py-2">{exercise.exercise_name}</td><td className="border border-[#404040] px-4 py-2">{exercise.description}</td><td className="border border-[#404040] px-4 py-2">{exercise.exercise_category}</td><td className="border border-[#404040] px-4 py-2 text-center">-</td><td className="border border-[#404040] px-4 py-2 text-center">-</td><td className="border border-[#404040] px-4 py-2 text-center"><button className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition duration-200 mr-2" onClick={() => {handleOpenEditModal(exercise.exercise_id, exercise.exercise_name, exercise.description, exercise.exercise_category)}}>Edit</button><button className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200" onClick={() => {handleDeleteExercise(exercise.exercise_id)}}>Delete</button></td></tr>
             ))}
             </tbody>
             </table>

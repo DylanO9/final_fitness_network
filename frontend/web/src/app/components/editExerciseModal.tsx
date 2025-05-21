@@ -17,13 +17,13 @@ export default function EditExerciseModal({ exercise, setOpenEditModal }: EditEx
     const [exerciseName, setExerciseName] = useState(exercise.exercise_name);
     const [exerciseDescription, setExerciseDescription] = useState(exercise.description);
     const [exerciseCategory, setExerciseCategory] = useState(exercise.exercise_category);
-    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
 
     }, []);
 
-    const handleExerciseEdit = async () => {
+    const handleExerciseEdit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         try {
             const response = await fetch(`http://localhost:5001/api/exercises/?exercise_id=${exercise.exercise_id}`, {
                     method: 'PUT',
@@ -45,22 +45,22 @@ export default function EditExerciseModal({ exercise, setOpenEditModal }: EditEx
         }
     }
 
-    if (loading) {
-        return (
-            <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 border-gray-800 z-1">
-                <div className="bg-[#2d2d2d] rounded-lg p-4 shadow-lg">
-                    <div className="flex items-center justify-center p-64">
-                        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 border-solid"></div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    // if (loading) {
+    //     return (
+    //         <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 border-gray-800 z-1">
+    //             <div className="bg-[#2d2d2d] rounded-lg p-4 shadow-lg">
+    //                 <div className="flex items-center justify-center p-64">
+    //                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 border-solid"></div>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     );
+    // }
     return (
         <>
         <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 border-gray-800 z-1">
             <div className="bg-[#2d2d2d] rounded-lg p-4 shadow-lg">
-                <form className="w-lg mx-auto flex items-center flex-col p-4" onSubmit={(e) => handleExerciseEdit()}>
+                <form className="w-lg mx-auto flex items-center flex-col p-4" onSubmit={(e) => handleExerciseEdit(e)}>
                     <h2 className="font-semibold text-lg mb-4 text-white">Edit Exercise</h2>
                     <div className="flex justify-center items-center mb-4 w-full">
                         <label htmlFor="exercise_name" className="mr-2 text-white">Exercise Name:</label>

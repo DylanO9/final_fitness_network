@@ -92,7 +92,7 @@ export default function Workouts () {
                     ))}
                 </ul>
                 {creatingWorkout && (
-                    <CreateWorkoutModal creatingWorkout={creatingWorkout} setCreatingWorkout={setCreatingWorkout}/>
+                    <CreateWorkoutModal setCreatingWorkout={setCreatingWorkout}/>
                 )}
 
                 {edittingWorkout && selectedWorkout && (

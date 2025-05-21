@@ -95,7 +95,7 @@ export default function LandingPage() {
                   <p className="text-slate-400">Lost 30 lbs in 6 months</p>
                 </div>
               </div>
-              <p className="text-slate-300">"This app completely transformed my fitness journey. The community support is incredible!"</p>
+              <p className="text-slate-300">&quot;This app completely transformed my fitness journey. The community support is incredible!&quot;</p>
             </div>
             <div className="bg-slate-800 p-6 rounded-xl">
               <div className="flex items-center mb-4">
@@ -105,7 +105,7 @@ export default function LandingPage() {
                   <p className="text-slate-400">Gained 15 lbs muscle</p>
                 </div>
               </div>
-              <p className="text-slate-300">"The personalized workout plans helped me achieve my muscle gain goals faster than ever."</p>
+              <p className="text-slate-300">&quot;The personalized workout plans helped me achieve my muscle gain goals faster than ever.&quot;</p>
             </div>
             <div className="bg-slate-800 p-6 rounded-xl">
               <div className="flex items-center mb-4">
@@ -115,7 +115,7 @@ export default function LandingPage() {
                   <p className="text-slate-400">Completed first marathon</p>
                 </div>
               </div>
-              <p className="text-slate-300">"The training plans and community support helped me cross the finish line of my first marathon!"</p>
+              <p className="text-slate-300">&quot;The training plans and community support helped me cross the finish line of my first marathon!&quot;</p>
             </div>
           </div>
         </div>
