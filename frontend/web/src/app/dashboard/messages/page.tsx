@@ -32,6 +32,7 @@ interface Friend {
 export default function Messages() {
   const socketRef = useRef<Socket | null>(null);
   const auth = useAuth();
+  const user = auth?.user;
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentChat, setCurrentChat] = useState<Message[]>([]);
   const [selectedUser, setSelectedUser] = useState<Conversation | null>(null);
@@ -40,6 +41,7 @@ export default function Messages() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -192,93 +194,118 @@ export default function Messages() {
   };
 
   return (
-    <main className="flex h-[calc(100vh-4rem)]">
-      <aside className="w-1/3 border-r">
-        <header className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-xl font-bold">Conversations</h2>
+    <main className="flex h-[calc(100vh-4rem)] bg-gray-50">
+      {/* Conversations sidebar */}
+      <aside className="w-1/3 border-r bg-white shadow-sm">
+        <header className="flex justify-between items-center p-4 border-b bg-white">
+          <h2 className="text-xl font-bold text-gray-800">Conversations</h2>
           <button
             onClick={() => setIsNewChatModalOpen(true)}
-            className="bg-purple-400 text-white px-3 py-1 rounded-lg hover:bg-purple-500"
+            className="bg-purple-400 text-white px-4 py-2 rounded-lg hover:bg-purple-500 transition-colors duration-200"
           >
             New Chat
           </button>
         </header>
-        <nav className="overflow-y-auto">
+        
+        <div className="overflow-y-auto h-[calc(100vh-8rem)]">
           {conversations.map((conversation) => (
             <article
               key={conversation.user_id}
               onClick={() => loadChat(conversation)}
-              className={`p-4 border-b cursor-pointer hover:bg-gray-100 ${
-                selectedUser?.user_id === conversation.user_id ? 'bg-gray-100' : ''
+              className={`p-4 border-b cursor-pointer hover:bg-gray-50 transition-colors duration-200 ${
+                selectedUser?.user_id === conversation.user_id ? 'bg-purple-50' : ''
               }`}
             >
-              <div className="flex items-center space-x-3">
-                <figure className="w-10 h-10 rounded-full bg-gray-300">
-                  {conversation.avatar_url && (
+              <div className="flex items-center space-x-4">
+                <figure className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                  {conversation.avatar_url ? (
                     <img
                       src={conversation.avatar_url}
                       alt={conversation.username}
-                      className="w-full h-full rounded-full"
+                      className="w-full h-full object-cover"
                     />
+                  ) : (
+                    <div className="w-full h-full bg-purple-200 flex items-center justify-center text-purple-600 font-semibold">
+                      {conversation.username.charAt(0).toUpperCase()}
+                    </div>
                   )}
                 </figure>
-                <div>
-                  <h3 className="font-semibold">{conversation.username}</h3>
-                  <p className="text-sm text-gray-500">{conversation.last_message}</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-800 truncate">{conversation.username}</h3>
+                  <p className="text-sm text-gray-500 truncate">{conversation.last_message}</p>
                 </div>
               </div>
             </article>
           ))}
-        </nav>
+        </div>
       </aside>
 
-      <section className="flex-1 flex flex-col">
+      {/* Chat area */}
+      <section className="flex-1 flex flex-col bg-white">
         {selectedUser ? (
           <>
-            <header className="p-4 border-b">
-              <h2 className="text-xl font-bold">{selectedUser.username}</h2>
+            <header className="p-4 border-b bg-white shadow-sm">
+              <div className="flex items-center space-x-4">
+                <figure className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                  {selectedUser.avatar_url ? (
+                    <img
+                      src={selectedUser.avatar_url}
+                      alt={selectedUser.username}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-purple-200 flex items-center justify-center text-purple-600 font-semibold">
+                      {selectedUser.username.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </figure>
+                <h2 className="text-xl font-bold text-gray-800">{selectedUser.username}</h2>
+              </div>
             </header>
-            <main className="flex-1 overflow-y-auto p-4">
-              {currentChat.map((message) => {
-                console.log('Rendering message:', message); // Debug log for message rendering
-                return (
+
+            <main className="flex-1 overflow-y-auto p-4 bg-gray-50">
+              <div className="max-w-3xl mx-auto space-y-4">
+                {currentChat.map((message) => (
                   <article
                     key={`message-${message.message_id}-${message.sent_at}`}
-                    className={`mb-4 flex ${
-                      message.sender_id === auth?.user?.user_id ? 'justify-end' : 'justify-start'
+                    className={`flex ${
+                      message.sender_id === user?.user_id ? 'justify-end' : 'justify-start'
                     }`}
                   >
                     <div
-                      className={`max-w-[70%] p-3 rounded-lg ${
-                        message.sender_id === auth?.user?.user_id
+                      className={`max-w-[70%] p-3 rounded-2xl ${
+                        message.sender_id === user?.user_id
                           ? 'bg-purple-400 text-white rounded-tr-none'
-                          : 'bg-gray-200 text-gray-800 rounded-tl-none'
+                          : 'bg-white text-gray-800 rounded-tl-none shadow-sm'
                       }`}
                     >
-                      <p className="break-words">{message.message_text || message.message}</p>
-                      <time className={`text-xs ${message.sender_id === auth?.user?.user_id ? 'text-white/75' : 'text-gray-500'}`}>
-                        {new Date(message.sent_at).toLocaleTimeString()}
+                      <p className="break-words text-sm">{message.message_text || message.message}</p>
+                      <time className={`text-xs mt-1 block ${
+                        message.sender_id === user?.user_id ? 'text-white/75' : 'text-gray-500'
+                      }`}>
+                        {new Date(message.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </time>
                     </div>
                   </article>
-                );
-              })}
-              <div ref={messagesEndRef} />
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
             </main>
-            <footer className="p-4 border-t">
-              <form onSubmit={sendMessage}>
-                <div className="flex space-x-2">
+
+            <footer className="p-4 border-t bg-white">
+              <form onSubmit={sendMessage} className="max-w-3xl mx-auto">
+                <div className="flex space-x-3">
                   <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    className="flex-1 border rounded-lg p-2"
+                    className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
                     placeholder="Type a message..."
                     aria-label="Message input"
                   />
                   <button
                     type="submit"
-                    className="bg-purple-400 text-white px-4 py-2 rounded-lg"
+                    className="bg-purple-400 text-white px-6 py-2 rounded-full hover:bg-purple-500 transition-colors duration-200 flex items-center justify-center"
                   >
                     Send
                   </button>
@@ -287,20 +314,24 @@ export default function Messages() {
             </footer>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500">
-            Select a conversation to start chatting
+          <div className="flex-1 flex items-center justify-center text-gray-500 bg-gray-50">
+            <div className="text-center">
+              <p className="text-lg mb-2">Select a conversation to start chatting</p>
+              <p className="text-sm text-gray-400">Or start a new chat with a friend</p>
+            </div>
           </div>
         )}
       </section>
 
+      {/* New Chat Modal */}
       {isNewChatModalOpen && (
         <dialog className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
+          <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] flex flex-col">
             <header className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">Start New Chat</h3>
+              <h3 className="text-lg font-bold text-gray-800">Start New Chat</h3>
               <button
                 onClick={() => setIsNewChatModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
                 aria-label="Close modal"
               >
                 ✕
@@ -311,30 +342,34 @@ export default function Messages() {
               placeholder="Search friends..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-2 border rounded-lg mb-4"
+              className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
               aria-label="Search friends"
             />
-            <nav className="max-h-64 overflow-y-auto">
+            <nav className="flex-1 overflow-y-auto">
               {filteredFriends.map((friend) => (
                 <article
                   key={friend.user_id}
                   onClick={() => startNewChat(friend)}
-                  className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg cursor-pointer"
+                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors duration-200"
                 >
-                  <figure className="w-10 h-10 rounded-full bg-gray-300">
-                    {friend.avatar_url && (
+                  <figure className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                    {friend.avatar_url ? (
                       <img
                         src={friend.avatar_url}
                         alt={friend.username}
-                        className="w-full h-full rounded-full"
+                        className="w-full h-full object-cover"
                       />
+                    ) : (
+                      <div className="w-full h-full bg-purple-200 flex items-center justify-center text-purple-600 font-semibold">
+                        {friend.username.charAt(0).toUpperCase()}
+                      </div>
                     )}
                   </figure>
-                  <span className="font-semibold">{friend.username}</span>
+                  <span className="font-semibold text-gray-800">{friend.username}</span>
                 </article>
               ))}
               {filteredFriends.length === 0 && (
-                <p className="text-center text-gray-500">No friends found</p>
+                <p className="text-center text-gray-500 py-4">No friends found</p>
               )}
             </nav>
           </div>
