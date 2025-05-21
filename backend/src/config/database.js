@@ -9,7 +9,8 @@ const pool = new Pool({
     port: process.env.DB_PORT, // Database port (e.g., 5432 for PostgreSQL)
     ssl: {
         rejectUnauthorized: false
-    }
+    },
+    family: 4
 });
 
 // Function to connect to the database
