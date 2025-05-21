@@ -9,13 +9,12 @@ interface Exercise {
 }
 
 interface AddExerciseModalProps {
-    addExercises: boolean;
     setAddExercises: (value: boolean) => void;
     selectedExercises: Exercise[];
     setSelectedExercises: (value: Exercise[]) => void;
 }
 
-export default function addExerciseModal({addExercises, setAddExercises, selectedExercises, setSelectedExercises}: AddExerciseModalProps) {
+export default function AddExerciseModal({ setAddExercises, selectedExercises, setSelectedExercises}: AddExerciseModalProps) {
     // What data do we need?
     // - List of exercises
     // - Selected exercises
@@ -30,7 +29,7 @@ export default function addExerciseModal({addExercises, setAddExercises, selecte
         // Fetch the list of exercises from the server
         const fetchExercises = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/exercises/all', {
+                const response = await fetch('http://172.23.16.1:5001/api/exercises/all', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

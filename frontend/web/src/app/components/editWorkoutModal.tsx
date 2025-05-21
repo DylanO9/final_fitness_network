@@ -21,7 +21,7 @@ interface Workout {
     workout_category: string;
 }
 
-export default function EditWorkoutModal({editingExercise, setEditingExercise, workout}: EditExerciseModalProps) {
+export default function EditWorkoutModal({setEditingExercise, workout}: EditExerciseModalProps) {
     // We need the workout_name, workout_category, and a list of exercises
     const [workoutName, setWorkoutName] = useState(workout.workout_name);
     const [workoutCategory, setWorkoutCategory] = useState(workout.workout_category);
@@ -34,7 +34,7 @@ export default function EditWorkoutModal({editingExercise, setEditingExercise, w
         setLoading(true);
         const fetchExercises = async () => {
             try {
-                const response = await fetch(`http://localhost:5001/api/exercises/?workout_id=${workout.workout_id}`, {
+                const response = await fetch(`http://172.23.16.1:5001/api/exercises/?workout_id=${workout.workout_id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export default function EditWorkoutModal({editingExercise, setEditingExercise, w
             }
         };
         fetchExercises();
-    }, []);
+    }, [workout.workout_id]);
 
     if (loading) {
         return (
@@ -75,7 +75,7 @@ export default function EditWorkoutModal({editingExercise, setEditingExercise, w
         e.preventDefault();
         // Let's update the workout name and category
         try {
-            const response = await fetch(`http://localhost:5001/api/workouts/?workout_id=${workout.workout_id}`, {
+            const response = await fetch(`http://172.23.16.1:5001/api/workouts/?workout_id=${workout.workout_id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export default function EditWorkoutModal({editingExercise, setEditingExercise, w
 
         // Now let's update the exercises
         try {
-            const response = await fetch(`http://localhost:5001/api/exercises/update-exercises`, {
+            const response = await fetch(`http://172.23.16.1:5001/api/exercises/update-exercises`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -198,7 +198,7 @@ export default function EditWorkoutModal({editingExercise, setEditingExercise, w
             )}
             <div className="fixed inset-0 bg-black opacity-50"></div>
             {addExercises && (
-                <AddExerciseModal addExercises={addExercises} setAddExercises={setAddExercises} selectedExercises={exercises} setSelectedExercises={setExercises} />
+                <AddExerciseModal setAddExercises={setAddExercises} selectedExercises={exercises} setSelectedExercises={setExercises} />
             )}
         </>
     )

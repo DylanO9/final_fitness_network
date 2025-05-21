@@ -20,7 +20,7 @@ export default function Workouts () {
         // Fetch the list of workouts from the server
         const fetchWorkouts = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/workouts', 
+                const response = await fetch('http://172.23.16.1:5001/api/workouts', 
                     {
                         method: 'GET',
                         headers: {
@@ -44,7 +44,7 @@ export default function Workouts () {
 
     const handleDeleteWorkout = async (workout_id: number) => {
         try {
-            const response = await fetch(`http://localhost:5001/api/workouts/${workout_id}`, {
+            const response = await fetch(`http://172.23.16.1:5001/api/workouts/${workout_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ export default function Workouts () {
                     ))}
                 </ul>
                 {creatingWorkout && (
-                    <CreateWorkoutModal creatingWorkout={creatingWorkout} setCreatingWorkout={setCreatingWorkout}/>
+                    <CreateWorkoutModal setCreatingWorkout={setCreatingWorkout}/>
                 )}
 
                 {edittingWorkout && selectedWorkout && (

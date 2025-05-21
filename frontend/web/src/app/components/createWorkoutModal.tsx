@@ -10,12 +10,10 @@ interface Exercise {
 }
 
 interface CreateWorkoutModalProps {
-    creatingWorkout: boolean;
     setCreatingWorkout: (value: boolean) => void;
 }
 
-export default function CreateWorkoutModal({creatingWorkout, setCreatingWorkout}: CreateWorkoutModalProps) {
-    const [exercises, setExercises] = useState<Exercise[]>([]);
+export default function CreateWorkoutModal({ setCreatingWorkout}: CreateWorkoutModalProps) {
     const [addExercises, setAddExercises] = useState(false);
     const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
     const [workoutName, setWorkoutName] = useState("");
@@ -25,7 +23,7 @@ export default function CreateWorkoutModal({creatingWorkout, setCreatingWorkout}
         e.preventDefault();
         let workout_id = null;
         try {
-            const response = await fetch('http://localhost:5001/api/workouts', {
+            const response = await fetch('http://172.23.16.1:5001/api/workouts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,7 +46,7 @@ export default function CreateWorkoutModal({creatingWorkout, setCreatingWorkout}
 
         // Add exercises to the workout
         try {
-            const response = await fetch('http://localhost:5001/api/exercises/add-existing-exercises', {
+            const response = await fetch('http://172.23.16.1:5001/api/exercises/add-existing-exercises', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,7 +72,6 @@ export default function CreateWorkoutModal({creatingWorkout, setCreatingWorkout}
         setWorkoutCategory("");
         setSelectedExercises([]);
         setAddExercises(false);
-        setExercises([]);
         setCreatingWorkout(false);
     };
 
@@ -150,7 +147,7 @@ export default function CreateWorkoutModal({creatingWorkout, setCreatingWorkout}
 
             {/* Modal for adding exercises */}
             {addExercises && (
-                <AddExerciseModal addExercises={addExercises} setAddExercises={setAddExercises} selectedExercises={selectedExercises} setSelectedExercises={setSelectedExercises}  />
+                <AddExerciseModal setAddExercises={setAddExercises} selectedExercises={selectedExercises} setSelectedExercises={setSelectedExercises}  />
             )}
         </>
     );

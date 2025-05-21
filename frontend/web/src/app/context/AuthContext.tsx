@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (token) {
           // Hit API to get user data
           try {
-            const response = await fetch('http://localhost:5001/api/users/me', {
+            const response = await fetch('http://172.23.16.1:5001/api/users/me', {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
