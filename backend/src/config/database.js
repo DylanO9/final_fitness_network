@@ -2,7 +2,8 @@ const { Pool } = require('pg');
 
 // Create a new pool instance with your database configuration
 const pool = new Pool({
-    connectionString: process.env.DB_DATABASE_URL
+    connectionString: process.env.DB_DATABASE_URL, 
+    family: 4
     // user: process.env.DB_USER, // Database username
     // host: process.env.DB_HOST, // Database host (e.g., localhost)
     // database: process.env.DB_NAME, // Database name
