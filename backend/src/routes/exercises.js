@@ -261,7 +261,7 @@ router.put('/update-exercises', authenticateToken, async (req, res) => {
 
 // Create a new exercise that isn't associated with any workout
 router.post('/no-workout', authenticateToken, async (req, res) => {
-    const { workout_id, exercise_name, description, exercise_category } = req.body;
+    const { exercise_name, description, exercise_category } = req.body;
     try {
         // Insert the exercise
         const exerciseResult = await pool.query(
