@@ -15,6 +15,7 @@ interface User {
 
 import { useEffect } from 'react';
 import { createContext, useContext, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
@@ -28,13 +29,14 @@ import { ReactNode } from 'react';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const pathname = usePathname(); // Add this hook
 
   // Everytime the app is refreshed grab the local storage token and check if the user is logged in
   useEffect(() => {
     console.log('Checking user authentication...');
     const fetchUserData = async () => {
       const token = localStorage.getItem('token');
-        console.log('Token:', token);
+        console.log('Auth Token:', token);
       if (token) {
           // Hit API to get user data
           try {
@@ -53,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const data = await response.json();
             console.log('User Verified:', data);
             // Set user data in state
-            setUser(data.user);
+            setUser(data);
           } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
             // If there is an error, clear the token
@@ -75,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     fetchUserData();
-  }, []);
+  }, [pathname]);
 
   const login = (userData: User) => setUser(userData);
   const logout = () => setUser(null);
