@@ -69,12 +69,12 @@ export default function addExerciseModal({addExercises, setAddExercises, selecte
     return (
         <>
             <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 border-gray-800 z-1">
-                <div className="bg-white rounded-lg p-4 shadow-lg sm:w-md">
-                <h2 className="text-2xl font-bold mb-4">Add Exercises to Workout</h2>
+                <div className="bg-[#2d2d2d] rounded-lg p-4 shadow-lg sm:w-md">
+                <h2 className="text-2xl font-bold mb-4 text-white">Add Exercises to Workout</h2>
                 <input 
                     type="text" 
                     placeholder="Search for exercises" 
-                    className="border border-gray-300 focus:outline-none rounded p-2 mt-4 w-full" 
+                    className="border border-[#404040] bg-[#404040] text-white focus:outline-none rounded p-2 mt-4 w-full" 
                     onChange={(e) => {
                     const searchTerm = e.target.value.toLowerCase();
                     setFilteredExercises(
@@ -87,7 +87,7 @@ export default function addExerciseModal({addExercises, setAddExercises, selecte
                 />
                 <ul className="flex flex-col">
                     {filteredExercises.map((exercise: Exercise, index) => (
-                    <li key={index} className="overflow-y-auto hover:bg-gray-100 bg-white rounded-md p-6 shadow-lg transform transition-transform hover:scale-105 flex flex-col justify-between">
+                    <li key={index} className="overflow-y-auto hover:bg-[#404040] bg-[#2d2d2d] rounded-md p-6 shadow-lg transform transition-transform hover:scale-105 flex flex-col justify-between">
                         <label className="flex items-center">
                         <input 
                             type="checkbox" 
@@ -104,7 +104,7 @@ export default function addExerciseModal({addExercises, setAddExercises, selecte
                             }} 
                         />
                         <div>
-                            <h2 className="font-semibold text-md">{exercise.exercise_name}</h2>
+                            <h2 className="font-semibold text-md text-white">{exercise.exercise_name}</h2>
                             <p className="text-sm text-gray-400">{exercise.exercise_category}</p>
                         </div>
                         </label>
@@ -112,15 +112,16 @@ export default function addExerciseModal({addExercises, setAddExercises, selecte
                     ))}
                 </ul>
                 <div className="flex justify-between">
-                    <button onClick={() => handleCancel()} className="border border-gray-300 rounded-md py-2 px-4 cursor-pointer font-semibold mt-4">
+                    <button onClick={() => handleCancel()} className="border border-[#404040] rounded-md py-2 px-4 cursor-pointer font-semibold mt-4 text-white hover:bg-[#404040] transition-colors duration-200">
                     Cancel
                     </button>
-                    <button onClick={() => handleAddExercises()} className="bg-purple-400 text-white rounded-md py-2 px-4 cursor-pointer font-semibold mt-4">
+                    <button onClick={() => handleAddExercises()} className="bg-blue-600 text-white rounded-md py-2 px-4 cursor-pointer font-semibold mt-4 hover:bg-blue-700 transition-colors duration-200">
                     Add to Workout
                     </button>
                 </div>
                 </div>
             </div>
+            <div className="fixed inset-0 bg-black opacity-50"></div>
         </>
     );
 }

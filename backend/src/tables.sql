@@ -29,7 +29,8 @@ CREATE TABLE Workouts (
 CREATE TABLE Exercises (
     exercise_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES Users(user_id) NOT NULL,
-    exercise_name VARCHAR(50) UNIQUE NOT NULL,
+    exercise_name VARCHAR(50) NOT NULL,
+    UNIQUE (user_id, exercise_name),   
     description TEXT,
     exercise_category VARCHAR(50) NOT NULL
 );

@@ -64,26 +64,26 @@ export default function Workouts () {
         <>
             <div className="w-full">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">Workouts</h1>
-                    <button onClick={() => setCreatingWorkout(true)} className="bg-purple-400 text-white rounded-md py-2 px-4 cursor-pointer font-semibold">
+                    <h1 className="text-2xl font-bold text-white">Workouts</h1>
+                    <button onClick={() => setCreatingWorkout(true)} className="bg-blue-600 text-white rounded-md py-2 px-4 cursor-pointer font-semibold hover:bg-blue-700">
                     Create Workout
                     </button>
                 </div>
-                <input type="text" placeholder="Search for workouts" className="border border-gray-300 focus:outline-none rounded p-2 mt-4 w-full" />
+                <input type="text" placeholder="Search for workouts" className="border border-[#404040] bg-[#2d2d2d] text-white focus:outline-none rounded p-2 mt-4 w-full" />
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 h-1/2 overflow-y-auto">
                     {workouts.map((workout: Workout, index) => (
-                    <li key={index} className="border bg-white border-gray-300 rounded-md p-6 shadow-lg transform transition-transform hover:scale-105 flex flex-col justify-between">
-                        <h2 className="font-semibold text-xl">{workout.workout_name}</h2>
+                    <li key={index} className="border bg-[#2d2d2d] border-[#404040] rounded-md p-6 shadow-lg flex flex-col justify-between">
+                        <h2 className="font-semibold text-xl text-white">{workout.workout_name}</h2>
                         <div className="flex justify-end mt-16">
                             <button 
                                 onClick={() => handleDeleteWorkout(workout.workout_id)} 
-                                className="bg-red-400 text-white rounded-md py-2 px-4 cursor-pointer font-semibold mr-2"
+                                className="bg-red-500 text-white rounded-md py-2 px-4 cursor-pointer font-semibold mr-2 hover:bg-red-600"
                             >
                                 Delete
                             </button>
                             <button 
                                 onClick={() => {setEditingWorkout(true); setSelectedWorkout(workout)}} 
-                                className="bg-purple-400 text-white rounded-md py-2 px-4 cursor-pointer font-semibold"
+                                className="bg-blue-600 text-white rounded-md py-2 px-4 cursor-pointer font-semibold hover:bg-blue-700"
                             >
                                 Edit
                             </button>

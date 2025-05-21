@@ -194,14 +194,14 @@ export default function Messages() {
   };
 
   return (
-    <main className="flex h-[calc(100vh-4rem)] bg-gray-50">
+    <main className="flex h-[calc(100vh-4rem)] bg-[#1a1a1a]">
       {/* Conversations sidebar */}
-      <aside className="w-1/3 border-r bg-white shadow-sm">
-        <header className="flex justify-between items-center p-4 border-b bg-white">
-          <h2 className="text-xl font-bold text-gray-800">Conversations</h2>
+      <aside className="w-1/3 border-r bg-[#2d2d2d] shadow-sm border-[#404040]">
+        <header className="flex justify-between items-center p-4 border-b bg-[#2d2d2d] border-[#404040]">
+          <h2 className="text-xl font-bold text-white">Conversations</h2>
           <button
             onClick={() => setIsNewChatModalOpen(true)}
-            className="bg-purple-400 text-white px-4 py-2 rounded-lg hover:bg-purple-500 transition-colors duration-200"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
           >
             New Chat
           </button>
@@ -212,12 +212,12 @@ export default function Messages() {
             <article
               key={conversation.user_id}
               onClick={() => loadChat(conversation)}
-              className={`p-4 border-b cursor-pointer hover:bg-gray-50 transition-colors duration-200 ${
-                selectedUser?.user_id === conversation.user_id ? 'bg-purple-50' : ''
+              className={`p-4 border-b cursor-pointer hover:bg-[#404040] transition-colors duration-200 border-[#404040] ${
+                selectedUser?.user_id === conversation.user_id ? 'bg-[#404040]' : ''
               }`}
             >
               <div className="flex items-center space-x-4">
-                <figure className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                <figure className="w-12 h-12 rounded-full bg-[#404040] overflow-hidden flex-shrink-0">
                   {conversation.avatar_url ? (
                     <img
                       src={conversation.avatar_url}
@@ -225,14 +225,14 @@ export default function Messages() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-purple-200 flex items-center justify-center text-purple-600 font-semibold">
+                    <div className="w-full h-full bg-blue-200 flex items-center justify-center text-blue-600 font-semibold">
                       {conversation.username.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </figure>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-800 truncate">{conversation.username}</h3>
-                  <p className="text-sm text-gray-500 truncate">{conversation.last_message}</p>
+                  <h3 className="font-semibold text-white truncate">{conversation.username}</h3>
+                  <p className="text-sm text-gray-400 truncate">{conversation.last_message}</p>
                 </div>
               </div>
             </article>
@@ -241,12 +241,12 @@ export default function Messages() {
       </aside>
 
       {/* Chat area */}
-      <section className="flex-1 flex flex-col bg-white">
+      <section className="flex-1 flex flex-col bg-[#2d2d2d]">
         {selectedUser ? (
           <>
-            <header className="p-4 border-b bg-white shadow-sm">
+            <header className="p-4 border-b bg-[#2d2d2d] shadow-sm border-[#404040]">
               <div className="flex items-center space-x-4">
-                <figure className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                <figure className="w-10 h-10 rounded-full bg-[#404040] overflow-hidden flex-shrink-0">
                   {selectedUser.avatar_url ? (
                     <img
                       src={selectedUser.avatar_url}
@@ -254,16 +254,16 @@ export default function Messages() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-purple-200 flex items-center justify-center text-purple-600 font-semibold">
+                    <div className="w-full h-full bg-blue-200 flex items-center justify-center text-blue-600 font-semibold">
                       {selectedUser.username.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </figure>
-                <h2 className="text-xl font-bold text-gray-800">{selectedUser.username}</h2>
+                <h2 className="text-xl font-bold text-white">{selectedUser.username}</h2>
               </div>
             </header>
 
-            <main className="flex-1 overflow-y-auto p-4 bg-gray-50">
+            <main className="flex-1 overflow-y-auto p-4 bg-[#1a1a1a]">
               <div className="max-w-3xl mx-auto space-y-4">
                 {currentChat.map((message) => (
                   <article
@@ -275,13 +275,13 @@ export default function Messages() {
                     <div
                       className={`max-w-[70%] p-3 rounded-2xl ${
                         message.sender_id === user?.user_id
-                          ? 'bg-purple-400 text-white rounded-tr-none'
-                          : 'bg-white text-gray-800 rounded-tl-none shadow-sm'
+                          ? 'bg-blue-600 text-white rounded-tr-none'
+                          : 'bg-[#404040] text-white rounded-tl-none shadow-sm'
                       }`}
                     >
                       <p className="break-words text-sm">{message.message_text || message.message}</p>
                       <time className={`text-xs mt-1 block ${
-                        message.sender_id === user?.user_id ? 'text-white/75' : 'text-gray-500'
+                        message.sender_id === user?.user_id ? 'text-white/75' : 'text-gray-400'
                       }`}>
                         {new Date(message.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </time>
@@ -292,20 +292,20 @@ export default function Messages() {
               </div>
             </main>
 
-            <footer className="p-4 border-t bg-white">
+            <footer className="p-4 border-t bg-[#2d2d2d] border-[#404040]">
               <form onSubmit={sendMessage} className="max-w-3xl mx-auto">
                 <div className="flex space-x-3">
                   <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                    className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-[#404040] text-white border-[#404040]"
                     placeholder="Type a message..."
                     aria-label="Message input"
                   />
                   <button
                     type="submit"
-                    className="bg-purple-400 text-white px-6 py-2 rounded-full hover:bg-purple-500 transition-colors duration-200 flex items-center justify-center"
+                    className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center"
                   >
                     Send
                   </button>
@@ -314,10 +314,10 @@ export default function Messages() {
             </footer>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500 bg-gray-50">
+          <div className="flex-1 flex items-center justify-center text-gray-400 bg-[#1a1a1a]">
             <div className="text-center">
               <p className="text-lg mb-2">Select a conversation to start chatting</p>
-              <p className="text-sm text-gray-400">Or start a new chat with a friend</p>
+              <p className="text-sm text-gray-500">Or start a new chat with a friend</p>
             </div>
           </div>
         )}
@@ -326,12 +326,12 @@ export default function Messages() {
       {/* New Chat Modal */}
       {isNewChatModalOpen && (
         <dialog className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] flex flex-col">
+          <div className="bg-[#2d2d2d] rounded-lg p-6 w-96 max-h-[80vh] flex flex-col">
             <header className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-800">Start New Chat</h3>
+              <h3 className="text-lg font-bold text-white">Start New Chat</h3>
               <button
                 onClick={() => setIsNewChatModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                className="text-gray-400 hover:text-gray-200 transition-colors duration-200"
                 aria-label="Close modal"
               >
                 ✕
@@ -342,7 +342,7 @@ export default function Messages() {
               placeholder="Search friends..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+              className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-[#404040] text-white border-[#404040]"
               aria-label="Search friends"
             />
             <nav className="flex-1 overflow-y-auto">
@@ -350,9 +350,9 @@ export default function Messages() {
                 <article
                   key={friend.user_id}
                   onClick={() => startNewChat(friend)}
-                  className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors duration-200"
+                  className="flex items-center space-x-3 p-3 hover:bg-[#404040] rounded-lg cursor-pointer transition-colors duration-200"
                 >
-                  <figure className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                  <figure className="w-10 h-10 rounded-full bg-[#404040] overflow-hidden flex-shrink-0">
                     {friend.avatar_url ? (
                       <img
                         src={friend.avatar_url}
@@ -360,16 +360,16 @@ export default function Messages() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-purple-200 flex items-center justify-center text-purple-600 font-semibold">
+                      <div className="w-full h-full bg-blue-200 flex items-center justify-center text-blue-600 font-semibold">
                         {friend.username.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </figure>
-                  <span className="font-semibold text-gray-800">{friend.username}</span>
+                  <span className="font-semibold text-white">{friend.username}</span>
                 </article>
               ))}
               {filteredFriends.length === 0 && (
-                <p className="text-center text-gray-500 py-4">No friends found</p>
+                <p className="text-center text-gray-400 py-4">No friends found</p>
               )}
             </nav>
           </div>
