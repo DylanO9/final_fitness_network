@@ -12,6 +12,7 @@ try {
     ssl: {
       rejectUnauthorized: false,
     },
+    family: 4
   });
   console.log('Database connected successfully');
 } catch (error) {
