@@ -9,6 +9,10 @@ try {
     database: process.env.DB_DATABASE,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
+    ssl: {
+      rejectUnathorized: false,
+    },
+    family: 4
   });
   console.log('Database connected successfully');
 } catch (error) {
