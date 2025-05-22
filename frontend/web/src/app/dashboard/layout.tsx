@@ -1,6 +1,6 @@
 import "../globals.css";
 import Link from "next/link";
-import { FaHome, FaRss, FaDumbbell, FaCalendarAlt, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
+import { FaHome, FaDumbbell, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
 import { AuthProvider } from "../context/AuthContext";
 
 export default async function DashboardLayout({

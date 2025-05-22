@@ -26,7 +26,7 @@ export default function DashboardPage() {
         className="mb-8"
       >
         <h1 className="text-3xl font-bold mb-2">Welcome back, User!</h1>
-        <p className="text-slate-300">Here's your fitness overview</p>
+        <p className="text-slate-300">Here&lsquo;s your fitness overview</p>
       </motion.div>
 
       {/* Stats Grid */}
