@@ -4,7 +4,7 @@ require('dotenv').config();
 let pool;
 try {
   pool = new Pool({
-    connectionString: process.env.DB.DATABASE.URL
+    connectionString: process.env.DB_DATABASE_URL
   });
   console.log('Database connected successfully');
 } catch (error) {
