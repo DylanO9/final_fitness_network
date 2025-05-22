@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/app/context/AuthContext';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 interface Message {
   message_id: number;
@@ -42,7 +43,6 @@ export default function Messages() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -195,14 +195,14 @@ export default function Messages() {
   };
 
   return (
-    <main className="flex h-[calc(100vh-4rem)] bg-[#1a1a1a]">
+    <main className="flex h-[calc(100vh-4rem)] bg-slate-900">
       {/* Conversations sidebar */}
-      <aside className="w-1/3 border-r bg-[#2d2d2d] shadow-sm border-[#404040]">
-        <header className="flex justify-between items-center p-4 border-b bg-[#2d2d2d] border-[#404040]">
+      <aside className="w-1/3 border-r bg-slate-800 shadow-sm border-slate-700">
+        <header className="flex justify-between items-center p-4 border-b bg-slate-800 border-slate-700">
           <h2 className="text-xl font-bold text-white">Conversations</h2>
           <button
             onClick={() => setIsNewChatModalOpen(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300"
           >
             New Chat
           </button>
@@ -210,15 +210,17 @@ export default function Messages() {
         
         <div className="overflow-y-auto h-[calc(100vh-8rem)]">
           {conversations.map((conversation) => (
-            <article
+            <motion.article
               key={conversation.user_id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
               onClick={() => loadChat(conversation)}
-              className={`p-4 border-b cursor-pointer hover:bg-[#404040] transition-colors duration-200 border-[#404040] ${
-                selectedUser?.user_id === conversation.user_id ? 'bg-[#404040]' : ''
+              className={`p-4 border-b cursor-pointer hover:bg-slate-700/50 transition-colors duration-300 border-slate-700 ${
+                selectedUser?.user_id === conversation.user_id ? 'bg-slate-700/50' : ''
               }`}
             >
               <div className="flex items-center space-x-4">
-                <figure className="w-12 h-12 rounded-full bg-[#404040] overflow-hidden flex-shrink-0">
+                <figure className="w-12 h-12 rounded-full bg-slate-700 overflow-hidden flex-shrink-0">
                   {conversation.avatar_url ? (
                     <Image
                       src={conversation.avatar_url}
@@ -226,28 +228,28 @@ export default function Messages() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-blue-200 flex items-center justify-center text-blue-600 font-semibold">
+                    <div className="w-full h-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-semibold">
                       {conversation.username.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </figure>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-white truncate">{conversation.username}</h3>
-                  <p className="text-sm text-gray-400 truncate">{conversation.last_message}</p>
+                  <p className="text-sm text-slate-300 truncate">{conversation.last_message}</p>
                 </div>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </aside>
 
       {/* Chat area */}
-      <section className="flex-1 flex flex-col bg-[#2d2d2d]">
+      <section className="flex-1 flex flex-col bg-slate-800">
         {selectedUser ? (
           <>
-            <header className="p-4 border-b bg-[#2d2d2d] shadow-sm border-[#404040]">
+            <header className="p-4 border-b bg-slate-800 shadow-sm border-slate-700">
               <div className="flex items-center space-x-4">
-                <figure className="w-10 h-10 rounded-full bg-[#404040] overflow-hidden flex-shrink-0">
+                <figure className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden flex-shrink-0">
                   {selectedUser.avatar_url ? (
                     <Image
                       src={selectedUser.avatar_url}
@@ -255,105 +257,94 @@ export default function Messages() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-blue-200 flex items-center justify-center text-blue-600 font-semibold">
+                    <div className="w-full h-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-semibold">
                       {selectedUser.username.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </figure>
-                <h2 className="text-xl font-bold text-white">{selectedUser.username}</h2>
+                <div>
+                  <h3 className="font-semibold text-white">{selectedUser.username}</h3>
+                  <p className="text-sm text-slate-300">Online</p>
+                </div>
               </div>
             </header>
 
-            <main className="flex-1 overflow-y-auto p-4 bg-[#1a1a1a]">
-              <div className="max-w-3xl mx-auto space-y-4">
-                {currentChat.map((message) => (
-                  <article
-                    key={`message-${message.message_id}-${message.sent_at}`}
-                    className={`flex ${
-                      message.sender_id === user?.user_id ? 'justify-end' : 'justify-start'
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {currentChat.map((message) => (
+                <motion.div
+                  key={message.message_id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex ${message.sender_id === user?.user_id ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[70%] rounded-lg p-3 ${
+                      message.sender_id === user?.user_id
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-700 text-white'
                     }`}
                   >
-                    <div
-                      className={`max-w-[70%] p-3 rounded-2xl ${
-                        message.sender_id === user?.user_id
-                          ? 'bg-blue-600 text-white rounded-tr-none'
-                          : 'bg-[#404040] text-white rounded-tl-none shadow-sm'
-                      }`}
-                    >
-                      <p className="break-words text-sm">{message.message_text || message.message}</p>
-                      <time className={`text-xs mt-1 block ${
-                        message.sender_id === user?.user_id ? 'text-white/75' : 'text-gray-400'
-                      }`}>
-                        {new Date(message.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </time>
-                    </div>
-                  </article>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            </main>
+                    <p>{message.message_text || message.message}</p>
+                    <span className="text-xs opacity-70 mt-1 block">
+                      {new Date(message.sent_at).toLocaleTimeString()}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
 
-            <footer className="p-4 border-t bg-[#2d2d2d] border-[#404040]">
-              <form onSubmit={sendMessage} className="max-w-3xl mx-auto">
-                <div className="flex space-x-3">
-                  <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-[#404040] text-white border-[#404040]"
-                    placeholder="Type a message..."
-                    aria-label="Message input"
-                  />
-                  <button
-                    type="submit"
-                    className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center"
-                  >
-                    Send
-                  </button>
-                </div>
-              </form>
-            </footer>
+            <form onSubmit={sendMessage} className="p-4 border-t border-slate-700">
+              <div className="flex space-x-4">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type a message..."
+                  className="flex-1 bg-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 border border-slate-600 transition-colors duration-300"
+                />
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300"
+                >
+                  Send
+                </button>
+              </div>
+            </form>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-400 bg-[#1a1a1a]">
-            <div className="text-center">
-              <p className="text-lg mb-2">Select a conversation to start chatting</p>
-              <p className="text-sm text-gray-500">Or start a new chat with a friend</p>
-            </div>
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-slate-300">Select a conversation to start chatting</p>
           </div>
         )}
       </section>
 
       {/* New Chat Modal */}
       {isNewChatModalOpen && (
-        <dialog className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#2d2d2d] rounded-lg p-6 w-96 max-h-[80vh] flex flex-col">
-            <header className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-white">Start New Chat</h3>
-              <button
-                onClick={() => setIsNewChatModalOpen(false)}
-                className="text-gray-400 hover:text-gray-200 transition-colors duration-200"
-                aria-label="Close modal"
-              >
-                ✕
-              </button>
-            </header>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700 w-full max-w-md mx-4"
+          >
+            <h2 className="text-xl font-bold mb-4 text-white">New Chat</h2>
             <input
               type="text"
-              placeholder="Search friends..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-[#404040] text-white border-[#404040]"
-              aria-label="Search friends"
+              placeholder="Search friends..."
+              className="w-full bg-slate-700 text-white rounded-lg px-4 py-2 mb-4 focus:outline-none focus:border-blue-500 border border-slate-600 transition-colors duration-300"
             />
-            <nav className="flex-1 overflow-y-auto">
+            <div className="space-y-2 max-h-96 overflow-y-auto">
               {filteredFriends.map((friend) => (
-                <article
+                <motion.button
                   key={friend.user_id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   onClick={() => startNewChat(friend)}
-                  className="flex items-center space-x-3 p-3 hover:bg-[#404040] rounded-lg cursor-pointer transition-colors duration-200"
+                  className="w-full p-3 flex items-center space-x-3 hover:bg-slate-700/50 rounded-lg transition-colors duration-300"
                 >
-                  <figure className="w-10 h-10 rounded-full bg-[#404040] overflow-hidden flex-shrink-0">
+                  <figure className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden flex-shrink-0">
                     {friend.avatar_url ? (
                       <Image
                         src={friend.avatar_url}
@@ -361,20 +352,26 @@ export default function Messages() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-blue-200 flex items-center justify-center text-blue-600 font-semibold">
+                      <div className="w-full h-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-semibold">
                         {friend.username.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </figure>
-                  <span className="font-semibold text-white">{friend.username}</span>
-                </article>
+                  <div className="text-left">
+                    <h3 className="font-semibold text-white">{friend.username}</h3>
+                    <p className="text-sm text-slate-300">{friend.status}</p>
+                  </div>
+                </motion.button>
               ))}
-              {filteredFriends.length === 0 && (
-                <p className="text-center text-gray-400 py-4">No friends found</p>
-              )}
-            </nav>
-          </div>
-        </dialog>
+            </div>
+            <button
+              onClick={() => setIsNewChatModalOpen(false)}
+              className="mt-4 w-full border border-slate-700 rounded-lg py-2 text-slate-300 hover:bg-slate-700 transition-colors duration-300"
+            >
+              Cancel
+            </button>
+          </motion.div>
+        </div>
       )}
     </main>
   );

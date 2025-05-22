@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import AddExerciseModal from "./addExerciseModal";
+import { motion } from 'framer-motion';
 
 interface Exercise {
     exercise_id: number;
@@ -14,6 +15,7 @@ interface EditExerciseModalProps {
     setEditingExercise: (value: boolean) => void;
     workout: Workout;
 }
+
 interface Workout {
     workout_id: number;
     user_id: number;
@@ -22,7 +24,6 @@ interface Workout {
 }
 
 export default function EditWorkoutModal({setEditingExercise, workout}: EditExerciseModalProps) {
-    // We need the workout_name, workout_category, and a list of exercises
     const [workoutName, setWorkoutName] = useState(workout.workout_name);
     const [workoutCategory, setWorkoutCategory] = useState(workout.workout_category);
     const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -30,7 +31,6 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditExer
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch the list of exercises from the server
         setLoading(true);
         const fetchExercises = async () => {
             try {
@@ -46,7 +46,6 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditExer
                 }
                 const data = await response.json();
                 setExercises(data);
-                // One second delay
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 setLoading(false);
             } catch (error) {
@@ -58,22 +57,22 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditExer
 
     if (loading) {
         return (
-            <>
-            <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 border-gray-800 z-1">
-                <div className="bg-[#2d2d2d] rounded-lg p-4 shadow-lg">
-                    <div className="flex items-center justify-center p-64">
-                        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 border-solid"></div>
+            <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700"
+                >
+                    <div className="flex items-center justify-center p-8">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
                     </div>
-                </div>
+                </motion.div>
             </div>
-            <div className="fixed inset-0 bg-black opacity-50"></div>
-            </>
         );
     }
 
     const handleWorkoutEdit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Let's update the workout name and category
         try {
             const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/workouts/?workout_id=${workout.workout_id}`, {
                 method: 'PUT',
@@ -93,7 +92,6 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditExer
             console.error("Error updating workout:", error);
         }
 
-        // Now let's update the exercises
         try {
             const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/exercises/update-exercises`, {
                 method: 'PUT',
@@ -109,97 +107,127 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditExer
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            console.log("Successful");
         } catch (error) {
             console.error("Error updating exercises:", error);
         }
 
-        // Reset the form
         setWorkoutName("");
         setWorkoutCategory("");
         setExercises([]);
         setAddExercises(false);
         setEditingExercise(false);
-        // Close the modal
-        setEditingExercise(false);
     };
+
     const handleCancel = () => {
         setWorkoutName(workout.workout_name);
         setWorkoutCategory(workout.workout_category);
         setExercises([]);
         setEditingExercise(false);
     };
+
     return (
         <>
             {!addExercises && (
-                <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 border-gray-800 z-1">
-                    <div className="bg-[#2d2d2d] rounded-lg p-4 shadow-lg">
-                    <h2 className="text-2xl font-bold mb-4 text-white">Edit Workout: {workout.workout_name}</h2>
-                    <h3 className="text-gray-400">Customize your workout routine by adding exercises and parameters</h3>
-                    <form onSubmit={(e) => handleWorkoutEdit(e)} className="mt-4 flex flex-col">
-                        <div className="flex flex-col">
-                            <label className="text-md text-white" htmlFor="workout_name">Workout Name</label>
-                            <input 
-                                id="workout_name" 
-                                name="workout_name" 
-                                type="text" 
-                                placeholder="Push" 
-                                className="border border-[#404040] bg-[#404040] text-white focus:outline-none rounded p-2 mt-2 w-full" 
-                                value={workoutName}
-                                onChange={(e) => setWorkoutName(e.target.value)}
-                                required 
-                            />
-                        </div>
-                        <div className="flex flex-col mt-4">
-                            <label className="text-md text-white" htmlFor="workout_category">Workout Type</label>
-                            <input 
-                                id="workout_category" 
-                                name="workout_category" 
-                                type="text" 
-                                placeholder="Chest and Triceps" 
-                                className="border border-[#404040] bg-[#404040] text-white focus:outline-none rounded p-2 mt-2 w-full" 
-                                value={workoutCategory}
-                                onChange={(e) => setWorkoutCategory(e.target.value)}
-                                required 
-                            />
-                        </div>
-                    <button onClick={() => setAddExercises(true)} className="rounded-md py-2 px-4 cursor-pointer mt-4 border-[#404040] border text-white hover:bg-[#404040] transition-colors duration-200">
-                        + Add Exercises
-                    </button>
-                    <ul>
-                        <h3 className='mt-4 font-semibold text-white'>Exercises</h3>
-                        {exercises.map((exercise: Exercise, index) => (
-                        <li key={index} className="border bg-[#404040] border-[#404040] rounded-md p-4 mt-4 shadow-lg transform transition-transform hover:scale-105 flex flex-row justify-between">
-                            <div className="flex flex-col">
-                                <h2 className="font-semibold text-md text-white">{exercise.exercise_name}</h2>
-                                <p className="text-sm text-gray-400">{exercise.exercise_category}</p>
+                <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700 w-full max-w-2xl mx-4"
+                    >
+                        <h2 className="text-2xl font-bold mb-2 text-white">Edit Workout: {workout.workout_name}</h2>
+                        <p className="text-slate-300 mb-6">Customize your workout routine by adding exercises and parameters</p>
+                        
+                        <form onSubmit={(e) => handleWorkoutEdit(e)} className="space-y-6">
+                            <div className="space-y-4">
+                                <div className="flex flex-col">
+                                    <label className="text-slate-300 mb-2" htmlFor="workout_name">Workout Name</label>
+                                    <input 
+                                        id="workout_name" 
+                                        name="workout_name" 
+                                        type="text" 
+                                        placeholder="Push" 
+                                        className="border border-slate-700 bg-slate-700 text-white focus:outline-none focus:border-blue-500 rounded-lg px-4 py-2 transition-colors duration-300" 
+                                        value={workoutName}
+                                        onChange={(e) => setWorkoutName(e.target.value)}
+                                        required 
+                                    />
+                                </div>
+                                <div className="flex flex-col">
+                                    <label className="text-slate-300 mb-2" htmlFor="workout_category">Workout Type</label>
+                                    <input 
+                                        id="workout_category" 
+                                        name="workout_category" 
+                                        type="text" 
+                                        placeholder="Chest and Triceps" 
+                                        className="border border-slate-700 bg-slate-700 text-white focus:outline-none focus:border-blue-500 rounded-lg px-4 py-2 transition-colors duration-300" 
+                                        value={workoutCategory}
+                                        onChange={(e) => setWorkoutCategory(e.target.value)}
+                                        required 
+                                    />
+                                </div>
                             </div>
-                            {/* Remove selected exercise */}
-                            <button onClick={(e) => {
-                                e.preventDefault();
-                                setExercises(exercises.filter((current_exercise: Exercise) => exercise.exercise_id != current_exercise.exercise_id))
-                            }} className="bg-red-500 text-white rounded-md py-1 px-2 cursor-pointer font-semibold mt-2 text-sm hover:bg-red-600 transition-colors duration-200">
-                                Remove
+
+                            <button 
+                                type="button"
+                                onClick={() => setAddExercises(true)} 
+                                className="w-full border border-slate-700 rounded-lg py-2 px-4 text-slate-300 hover:bg-slate-700 transition-colors duration-300"
+                            >
+                                + Add Exercises
                             </button>
-                        </li>
-                        ))}
-                    </ul>
-                    <div className="flex justify-between">
-                        <button onClick={() => handleCancel()} className="border border-[#404040] rounded-md py-2 px-4 cursor-pointer font-semibold mt-4 text-white hover:bg-[#404040] transition-colors duration-200">
-                            Cancel
-                        </button>
-                        <button type="submit" className="block bg-blue-600 text-white rounded-md py-2 px-4 cursor-pointer font-semibold mt-4 hover:bg-blue-700 transition-colors duration-200">
-                            Save Changes
-                        </button>
-                    </div>
-                    </form>
-                    </div>
+
+                            {exercises.length > 0 && (
+                                <div className="space-y-4">
+                                    <h3 className="font-semibold text-white">Current Exercises</h3>
+                                    <ul className="space-y-3">
+                                        {exercises.map((exercise: Exercise, index) => (
+                                            <motion.li 
+                                                key={index}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="bg-slate-700 border border-slate-600 rounded-lg p-4 flex justify-between items-center"
+                                            >
+                                                <div>
+                                                    <h4 className="font-semibold text-white">{exercise.exercise_name}</h4>
+                                                    <p className="text-slate-300 text-sm">{exercise.exercise_category}</p>
+                                                </div>
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setExercises(exercises.filter((current_exercise) => current_exercise.exercise_id !== exercise.exercise_id));
+                                                    }} 
+                                                    className="bg-red-500 text-white rounded-lg py-1 px-3 text-sm hover:bg-red-600 transition-colors duration-300"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </motion.li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            <div className="flex justify-end space-x-4 pt-4 border-t border-slate-700">
+                                <button 
+                                    type="button"
+                                    onClick={handleCancel} 
+                                    className="border border-slate-700 rounded-lg py-2 px-6 text-slate-300 hover:bg-slate-700 transition-colors duration-300"
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    className="bg-blue-600 text-white rounded-lg py-2 px-6 hover:bg-blue-700 transition-colors duration-300"
+                                >
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </motion.div>
                 </div>
             )}
-            <div className="fixed inset-0 bg-black opacity-50"></div>
+
             {addExercises && (
                 <AddExerciseModal setAddExercises={setAddExercises} selectedExercises={exercises} setSelectedExercises={setExercises} />
             )}
         </>
-    )
+    );
 }
