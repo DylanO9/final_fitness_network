@@ -48,3 +48,22 @@ CREATE TABLE Messages (
     message_text TEXT NOT NULL,
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE Calendar_Entries (
+    calendar_entry_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES Users(user_id) NOT NULL,
+    workout_id INT REFERENCES Workouts(workout_id) NOT NULL,
+    workout_date DATE NOT NULL
+);
+
+CREATE TABLE Sets_Reps (
+    set_rep_id SERIAL PRIMARY KEY,
+    calendar_entry_id INT REFERENCES Calendar_Entries(calendar_entry_id) NOT NULL,
+    workout_id INT REFERENCES Workouts(workout_id) NOT NULL,
+    exercise_id INT REFERENCES Exercises(exercise_id) NOT NULL,
+    set_number INT NOT NULL,
+    reps INT NOT NULL,
+    weight DECIMAL(5,2) NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
