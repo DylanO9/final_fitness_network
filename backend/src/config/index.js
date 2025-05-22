@@ -10,9 +10,8 @@ try {
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
     ssl: {
-      rejectUnathorized: false,
+      rejectUnauthorized: false,
     },
-    family: 4
   });
   console.log('Database connected successfully');
 } catch (error) {
