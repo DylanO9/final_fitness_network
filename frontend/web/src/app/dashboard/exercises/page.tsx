@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/app/context/AuthContext";
 import EditExerciseModal from "@/app/components/editExerciseModal";
+import { motion } from 'framer-motion';
 
 interface Exercise {
     exercise_id: number;
@@ -11,7 +12,6 @@ interface Exercise {
     description: string;
     exercise_category: string;
 }
-
 
 export default function Exercises() {
     const auth = useAuth();
@@ -111,77 +111,129 @@ export default function Exercises() {
 
     return (
         <div className="w-full">
-            <h1 className="text-2xl font-bold mb-10 text-white">Exercises</h1>
-            {/* Form to create a new exercise */}
-            <form className="w-lg bg-[#2d2d2d] mx-auto flex items-center flex-col p-4 border border-[#404040] shadow-md rounded-md" onSubmit={(e) => {handleCreateExercise(e)}}>
-            <h2 className="font-semibold text-lg mb-4 text-white">Add an Exercise</h2>
-            <div className="flex justify-center items-center mb-4 w-full">
-            <label htmlFor="exercise_name" className="mr-2 text-white">Exercise Name:</label>
-            <input
-            type="text"
-            id="exercise_name"
-            name="exercise_name"
-            className="border border-[#404040] bg-[#404040] text-white rounded px-2 py-1 mr-2 w-full"
-            placeholder="Enter exercise name"
-            />
-            </div>
-            <div className="flex justify-center items-center mb-4 w-full">
-            <label htmlFor="exercise_description" className="mr-2 text-white">Description:</label>
-            <input
-            type="text"
-            id="description"
-            name="description"
-            className="border border-[#404040] bg-[#404040] text-white rounded px-2 py-1 mr-2 w-full"
-            placeholder="Enter exercise description"
-            />
-            </div>
-            <div className="flex flex-row mb-4">
-            <label htmlFor="exercise_type" className="mr-2 text-white">Type:</label>
-            <select
-            id="exercise_category"
-            name="exercise_category"
-            className="border border-[#404040] bg-[#404040] text-white rounded px-2 py-1 mr-2"
+            <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-3xl font-bold mb-8 text-white"
             >
-            <option value="legs">Legs</option>
-            <option value="back">Back</option>
-            <option value="biceps">Biceps</option>
-            <option value="triceps">Triceps</option>
-            <option value="chest">Chest</option>
-            <option value="shoulders">Shoulders</option>
-            <option value="abs">Abs</option>
-            <option value="glutes">Glutes</option>
-            <option value="calves">Calves</option>
-            <option value="forearms">Forearms</option>
-            </select>
-            </div>
-            <button type="submit" className="bg-blue-600 text-white rounded-md py-2 px-4 cursor-pointer font-semibold hover:bg-blue-700 transition duration-200">Add</button>
-            </form>
+                Exercises
+            </motion.h1>
+
+            {/* Form to create a new exercise */}
+            <motion.form 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="w-full bg-slate-800 mx-auto flex items-center flex-col p-6 border border-slate-700 shadow-lg rounded-xl mb-10" 
+                onSubmit={(e) => {handleCreateExercise(e)}}
+            >
+                <h2 className="font-semibold text-xl mb-6 text-white">Add an Exercise</h2>
+                <div className="w-full space-y-4">
+                    <div className="flex flex-col">
+                        <label htmlFor="exercise_name" className="text-slate-300 mb-2">Exercise Name:</label>
+                        <input
+                            type="text"
+                            id="exercise_name"
+                            name="exercise_name"
+                            className="border border-slate-700 bg-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors duration-300"
+                            placeholder="Enter exercise name"
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <label htmlFor="exercise_description" className="text-slate-300 mb-2">Description:</label>
+                        <input
+                            type="text"
+                            id="description"
+                            name="description"
+                            className="border border-slate-700 bg-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors duration-300"
+                            placeholder="Enter exercise description"
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <label htmlFor="exercise_type" className="text-slate-300 mb-2">Type:</label>
+                        <select
+                            id="exercise_category"
+                            name="exercise_category"
+                            className="border border-slate-700 bg-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors duration-300"
+                        >
+                            <option value="legs">Legs</option>
+                            <option value="back">Back</option>
+                            <option value="biceps">Biceps</option>
+                            <option value="triceps">Triceps</option>
+                            <option value="chest">Chest</option>
+                            <option value="shoulders">Shoulders</option>
+                            <option value="abs">Abs</option>
+                            <option value="glutes">Glutes</option>
+                            <option value="calves">Calves</option>
+                            <option value="forearms">Forearms</option>
+                        </select>
+                    </div>
+                    <button 
+                        type="submit" 
+                        className="bg-blue-600 text-white rounded-lg py-2 px-6 cursor-pointer font-semibold hover:bg-blue-700 transition-colors duration-300 mt-4"
+                    >
+                        Add Exercise
+                    </button>
+                </div>
+            </motion.form>
+
             {/* Table for displaying all exercises owned */}
-            {exercises.length > 0 ? (
-            <table className="table-auto w-full mt-10 border-collapse border border-[#404040] shadow-md rounded-md">
-            <thead>
-            <tr className="bg-blue-600 text-white">
-                <th className="border border-[#404040] px-4 py-2">Name</th>
-                <th className="border border-[#404040] px-4 py-2">Description</th>
-                <th className="border border-[#404040] px-4 py-2">Category</th>
-                <th className="border border-[#404040] px-4 py-2">Sets</th>
-                <th className="border border-[#404040] px-4 py-2">Reps</th>
-                <th className="border border-[#404040] px-4 py-2">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            {exercises.map((exercise, index) => (
-                <tr key={`${exercise.exercise_id}-${index}`} className="hover:bg-[#404040] transition duration-200 bg-[#2d2d2d] text-white"><td className="border border-[#404040] px-4 py-2">{exercise.exercise_name}</td><td className="border border-[#404040] px-4 py-2">{exercise.description}</td><td className="border border-[#404040] px-4 py-2">{exercise.exercise_category}</td><td className="border border-[#404040] px-4 py-2 text-center">-</td><td className="border border-[#404040] px-4 py-2 text-center">-</td><td className="border border-[#404040] px-4 py-2 text-center"><button className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition duration-200 mr-2" onClick={() => {handleOpenEditModal(exercise.exercise_id, exercise.exercise_name, exercise.description, exercise.exercise_category)}}>Edit</button><button className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200" onClick={() => {handleDeleteExercise(exercise.exercise_id)}}>Delete</button></td></tr>
-            ))}
-            </tbody>
-            </table>
-            ) : (
-            <p className="mt-4 text-gray-400">No exercises found.</p>
-            )}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+            >
+                {exercises.length > 0 ? (
+                    <div className="overflow-x-auto">
+                        <table className="w-full border-collapse">
+                            <thead>
+                                <tr className="bg-slate-800 text-white">
+                                    <th className="border border-slate-700 px-6 py-4 text-left">Name</th>
+                                    <th className="border border-slate-700 px-6 py-4 text-left">Description</th>
+                                    <th className="border border-slate-700 px-6 py-4 text-left">Category</th>
+                                    <th className="border border-slate-700 px-6 py-4 text-center">Sets</th>
+                                    <th className="border border-slate-700 px-6 py-4 text-center">Reps</th>
+                                    <th className="border border-slate-700 px-6 py-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {exercises.map((exercise, index) => (
+                                    <tr 
+                                        key={`${exercise.exercise_id}-${index}`} 
+                                        className="hover:bg-slate-700/50 transition-colors duration-300 bg-slate-800 text-white"
+                                    >
+                                        <td className="border border-slate-700 px-6 py-4">{exercise.exercise_name}</td>
+                                        <td className="border border-slate-700 px-6 py-4">{exercise.description}</td>
+                                        <td className="border border-slate-700 px-6 py-4">{exercise.exercise_category}</td>
+                                        <td className="border border-slate-700 px-6 py-4 text-center">-</td>
+                                        <td className="border border-slate-700 px-6 py-4 text-center">-</td>
+                                        <td className="border border-slate-700 px-6 py-4 text-center space-x-2">
+                                            <button 
+                                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300" 
+                                                onClick={() => {handleOpenEditModal(exercise.exercise_id, exercise.exercise_name, exercise.description, exercise.exercise_category)}}
+                                            >
+                                                Edit
+                                            </button>
+                                            <button 
+                                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-300" 
+                                                onClick={() => {handleDeleteExercise(exercise.exercise_id)}}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p className="text-slate-300 text-center mt-8">No exercises found.</p>
+                )}
+            </motion.div>
+
             {openEditModal && editExercise && (
                 <EditExerciseModal exercise={editExercise} setOpenEditModal={setOpenEditModal}/>
             )}
-            
         </div>
     )
 }
