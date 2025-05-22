@@ -25,7 +25,7 @@ export default function EditExerciseModal({ exercise, setOpenEditModal }: EditEx
     const handleExerciseEdit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://172.23.16.1:5001/api/exercises/?exercise_id=${exercise.exercise_id}`, {
+            const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/exercises/?exercise_id=${exercise.exercise_id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

@@ -54,7 +54,7 @@ export default function Messages() {
 
   useEffect(() => {
     // Initialize socket connection
-    socketRef.current = io('http://172.23.16.1:5001', {
+    socketRef.current = io('https://fitness-network-backend-lcuf.onrender.com', {
       auth: {
         token: localStorage.getItem('token')
       }
@@ -109,7 +109,7 @@ export default function Messages() {
 
   const fetchConversations = async () => {
     try {
-      const response = await fetch('http://172.23.16.1:5001/api/messages/conversations', {
+      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/messages/conversations', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -123,7 +123,7 @@ export default function Messages() {
 
   const fetchFriends = async () => {
     try {
-      const response = await fetch('http://172.23.16.1:5001/api/friends', {
+      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/friends', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -138,7 +138,7 @@ export default function Messages() {
   const loadChat = async (conversation: Conversation) => {
     setSelectedUser(conversation);
     try {
-      const response = await fetch(`http://172.23.16.1:5001/api/messages/${conversation.user_id}`, {
+      const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/messages/${conversation.user_id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
