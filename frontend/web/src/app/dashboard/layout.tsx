@@ -1,13 +1,17 @@
+'use client';
 import "../globals.css";
 import Link from "next/link";
-import { FaHome, FaDumbbell, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
+import { FaHome, FaDumbbell, FaEnvelope, FaSignOutAlt, FaUserFriends } from "react-icons/fa";
 import { AuthProvider } from "../context/AuthContext";
+import { useState } from "react";
+import FriendsModal from "./components/FriendsModal";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isFriendsModalOpen, setIsFriendsModalOpen] = useState(false);
 
   // Data structure to hold navigation names and links
   const navItems = [
@@ -20,11 +24,19 @@ export default async function DashboardLayout({
     { name: "Messages", link: "/dashboard/messages", icon: <FaEnvelope /> },
     { name: "Logout", link: "/", icon: <FaSignOutAlt /> },
   ];
+
   return (
     <AuthProvider>
       <div className="min-h-screen bg-slate-900">
         <header className="sticky top-0 bg-slate-800 shadow-md p-4 flex text-2xl justify-between items-center text-white border-b border-slate-700">
           <span className="font-bold text-blue-500">Fitness Hub</span>
+          <button
+            onClick={() => setIsFriendsModalOpen(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-300"
+          >
+            <FaUserFriends />
+            <span>Friends</span>
+          </button>
         </header>
         <div className="flex flex-row">
           <aside className="w-64 bg-slate-800 p-4 min-h-screen text-lg border-r border-slate-700">
@@ -48,6 +60,10 @@ export default async function DashboardLayout({
             {children}
           </main>
         </div>
+        <FriendsModal 
+          isOpen={isFriendsModalOpen} 
+          onClose={() => setIsFriendsModalOpen(false)} 
+        />
       </div>
     </AuthProvider>
   );
