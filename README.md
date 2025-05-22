@@ -27,7 +27,7 @@ Check out a live walkthrough of the platform and its core features:
 
 - 🎥 [Feature Demo Video](https://youtu.be/your-demo-video-link](https://www.youtube.com/watch?v=_wH3K6NIXo4))
 - 🎥 [Messaging Demo](https://www.youtube.com/watch?v=htUlE9Ofhvs)
-- 🚀 [Live App](https://final-fitness-network.vercel.app/)
+- 🚀 [Live App](https://final-fitness-network.vercel.app/) -> first API hit may have extra delay due to hosting services
 
 ## Getting Started
 
