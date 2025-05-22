@@ -25,8 +25,8 @@ A social fitness network for tracking workouts, sharing PRs, progress photos, an
 ## Demo
 Check out a live walkthrough of the platform and its core features:
 
-- 🎥 [Feature Demo Video]([https://youtu.be/your-demo-video-link](https://www.youtube.com/watch?v=_wH3K6NIXo4))
-- 🎥 [Messaging Demo]([https://www.youtube.com/watch?v=htUlE9Ofhvs])
+- 🎥 [Feature Demo Video](https://youtu.be/your-demo-video-link](https://www.youtube.com/watch?v=_wH3K6NIXo4))
+- 🎥 [Messaging Demo](https://www.youtube.com/watch?v=htUlE9Ofhvs)
 - 🚀 [Live App](https://final-fitness-network.vercel.app/)
 
 ## Getting Started
