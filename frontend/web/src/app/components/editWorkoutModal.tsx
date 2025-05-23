@@ -73,6 +73,7 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditExer
 
     const handleWorkoutEdit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/workouts/?workout_id=${workout.workout_id}`, {
                 method: 'PUT',
@@ -110,7 +111,7 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditExer
         } catch (error) {
             console.error("Error updating exercises:", error);
         }
-
+        setLoading(false);
         setWorkoutName("");
         setWorkoutCategory("");
         setExercises([]);

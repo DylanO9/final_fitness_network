@@ -124,7 +124,7 @@ export default function Workouts () {
             </motion.ul>
 
             {creatingWorkout && (
-                <CreateWorkoutModal setCreatingWorkout={setCreatingWorkout}/>
+                <CreateWorkoutModal setWorkouts={setWorkouts} setCreatingWorkout={setCreatingWorkout}/>
             )}
 
             {edittingWorkout && selectedWorkout && (

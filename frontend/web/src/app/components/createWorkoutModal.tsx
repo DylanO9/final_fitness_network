@@ -10,8 +10,16 @@ interface Exercise {
     exercise_category: string;
 }
 
+interface Workout {
+    workout_id: number;
+    user_id: number;
+    workout_name: string;
+    workout_category: string;
+}
+
 interface CreateWorkoutModalProps {
     setCreatingWorkout: (value: boolean) => void;
+    setWorkouts: (value: Workout[]) => void;
 }
 
 export default function CreateWorkoutModal({ setCreatingWorkout}: CreateWorkoutModalProps) {
@@ -19,10 +27,12 @@ export default function CreateWorkoutModal({ setCreatingWorkout}: CreateWorkoutM
     const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
     const [workoutName, setWorkoutName] = useState("");
     const [workoutCategory, setWorkoutCategory] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleWorkoutCreation = async (e: React.FormEvent) => {
         e.preventDefault();
         let workout_id = null;
+        setLoading(true);
         try {
             const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/workouts', {
                 method: 'POST',
@@ -67,6 +77,7 @@ export default function CreateWorkoutModal({ setCreatingWorkout}: CreateWorkoutM
         catch (error) {
             console.error("Error adding exercises to workout:", error);
         }
+        setLoading(false);
 
         // Reset the form
         setWorkoutName("");
@@ -75,6 +86,22 @@ export default function CreateWorkoutModal({ setCreatingWorkout}: CreateWorkoutM
         setAddExercises(false);
         setCreatingWorkout(false);
     };
+
+    if (loading) {
+        return (
+            <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700"
+                >
+                    <div className="flex items-center justify-center p-8">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
 
     return (
         <>
