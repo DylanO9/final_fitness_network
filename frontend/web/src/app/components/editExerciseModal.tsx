@@ -43,6 +43,7 @@ export default function EditExerciseModal({ exercise, setOpenEditModal }: EditEx
         } catch (error) {
             console.error("Error updating exercise:", error);
         }
+        setOpenEditModal(false);
     }
 
     // if (loading) {
