@@ -31,7 +31,7 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-router.get('/request'), authenticateToken, async (req, res) => {
+router.get('/request', authenticateToken, async (req, res) => {
   try {
     // Query where user_id is the current user
     const result1 = await pool.query(
@@ -57,7 +57,7 @@ router.get('/request'), authenticateToken, async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};
+});
 
 // Send friend request
 router.post('/request', authenticateToken, async (req, res) => {
@@ -109,7 +109,7 @@ router.put('/respond', authenticateToken, async (req, res) => {
 
     // If not found, try the other direction
     const result2 = await pool.query(
-      `UPDATE Friends
+      `UPDATE Friends 
        SET status = $1
        WHERE user_id = $2 AND friend_id = $3 RETURNING *`,
       [status, req.user.user_id, friend_id]
