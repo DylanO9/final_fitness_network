@@ -1,9 +1,10 @@
 'use client';
 import "../globals.css";
 import Link from "next/link";
-import { FaHome, FaDumbbell, FaEnvelope, FaSignOutAlt, FaBars } from "react-icons/fa";
+import { FaHome, FaDumbbell, FaEnvelope, FaSignOutAlt, FaBars, FaUsers } from "react-icons/fa";
 import { AuthProvider } from "../context/AuthContext";
 import { useState } from "react";
+import FriendsModal from "./components/FriendsModal";
 
 export default function DashboardLayout({
   children,
@@ -11,6 +12,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isFriendsModalOpen, setIsFriendsModalOpen] = useState(false);
 
   // Data structure to hold navigation names and links
   const navItems = [
@@ -28,11 +30,16 @@ export default function DashboardLayout({
         <header className="sticky top-0 bg-slate-800 shadow-md p-4 flex text-2xl justify-between items-center text-white border-b border-slate-700 z-50">
           <button
             className="lg:hidden text-blue-500 hover:text-blue-400 transition-colors"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}          >
             <FaBars />
           </button>
           <span className="font-bold text-blue-500">Fitness Hub</span>
+          <button
+            onClick={() => setIsFriendsModalOpen(true)}
+            className="text-blue-500 hover:text-blue-400 transition-colors"
+          >
+            <FaUsers className="text-2xl" />
+          </button>
         </header>
         <div className="w-screen overflow-x-hidden flex flex-row">
           <aside 
@@ -63,8 +70,11 @@ export default function DashboardLayout({
           )}
           <main className="flex-1 w-screen p-6 min-h-screen bg-slate-900">
             {children}
-          </main>
-        </div>
+          </main>        </div>
+        <FriendsModal 
+          isOpen={isFriendsModalOpen} 
+          onClose={() => setIsFriendsModalOpen(false)} 
+        />
       </div>
     </AuthProvider>
   );
