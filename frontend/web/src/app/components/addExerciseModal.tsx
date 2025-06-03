@@ -1,21 +1,15 @@
+'use client';
 import { useState, useEffect } from "react";
 import { motion } from 'framer-motion';
-
-interface Exercise {
-    exercise_id: number;
-    user_id: number;
-    exercise_name: string;
-    description: string;
-    exercise_category: string;
-}
+import ApiClient, { Exercise } from '@/utils/apiClient';
 
 interface AddExerciseModalProps {
     setAddExercises: (value: boolean) => void;
     selectedExercises: Exercise[];
-    setSelectedExercises: (value: Exercise[]) => void;
+    setSelectedExercises: (exercises: Exercise[]) => void;
 }
 
-export default function AddExerciseModal({ setAddExercises, selectedExercises, setSelectedExercises}: AddExerciseModalProps) {
+export default function AddExerciseModal({ setAddExercises, selectedExercises, setSelectedExercises }: AddExerciseModalProps) {
     // What data do we need?
     // - List of exercises
     // - Selected exercises
@@ -28,22 +22,16 @@ export default function AddExerciseModal({ setAddExercises, selectedExercises, s
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch the list of exercises from the server
         const fetchExercises = async () => {
             try {
-                const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/exercises/all', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                const { data, error } = await ApiClient.getAllExercises();
+                if (error) {
+                    throw new Error(error);
                 }
-                const data = await response.json();
-                setExercises(data);
-                setFilteredExercises(data);
+                if (data) {
+                    setExercises(data);
+                    setFilteredExercises(data);
+                }
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching exercises:", error);
@@ -53,13 +41,12 @@ export default function AddExerciseModal({ setAddExercises, selectedExercises, s
     }, []);
 
     const handleAddExercises = () => {
-        // add the currentSelectedExercises to the selectedExercises
         const newSelectedExercises = [...selectedExercises, ...currentSelectedExercises];
         setSelectedExercises(newSelectedExercises);
         setAddExercises(false);
         setCurrentSelectedExercises([]);
         setFilteredExercises([]);
-    }
+    };
 
     const handleCancel = () => {
         setCurrentSelectedExercises([]);

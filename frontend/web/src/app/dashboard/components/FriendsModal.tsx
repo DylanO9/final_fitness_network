@@ -1,31 +1,17 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { FaTimes, FaUserPlus, FaCheck, FaTimes as FaX, FaSearch, FaUser } from 'react-icons/fa';
+import ApiClient, { User, Friend } from '../../../utils/apiClient';
 
 interface FriendsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface Friend {
-  user_id: number;
-  username: string;
-  avatar_url: string;
-  status: string;
-}
-
-interface User {
-  user_id: number;
-  username: string;
-  avatar_url: string;
-  bio: string;
-}
-
 export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
-  const [activeTab, setActiveTab] = useState<'friends' | 'requests' | 'add' | 'discover'>('friends');
+  const [activeTab, setActiveTab] = useState<'friends' | 'requests' | 'discover'>('friends');
   const [friends, setFriends] = useState<Friend[]>([]);
   const [friendRequests, setFriendRequests] = useState<Friend[]>([]);
-  const [newFriendUsername, setNewFriendUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,14 +27,18 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
     }
   }, [isOpen, activeTab]);
 
+  // Clear error when tab changes
+  useEffect(() => {
+    setError(null);
+  }, [activeTab]);
+
   const fetchUsers = async () => {
     try {
-      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/users');
-      if (!response.ok) {
-        throw new Error('Failed to fetch users');
+      const { data, error } = await ApiClient.getAllUsers();
+      if (error) {
+        throw new Error(error);
       }
-      const data = await response.json();
-      if (Array.isArray(data)) {
+      if (data) {
         setUsers(data);
       } else {
         setUsers([]);
@@ -63,16 +53,11 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
 
   const fetchFriends = async () => {
     try {
-      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/friends', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch friends');
+      const { data, error } = await ApiClient.getAllFriends();
+      if (error) {
+        throw new Error(error);
       }
-      const data = await response.json();
-      if (Array.isArray(data)) {
+      if (data) {
         setFriends(data);
       } else {
         setFriends([]);
@@ -87,17 +72,11 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
 
   const fetchFriendRequests = async () => {
     try {
-      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/friends/', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch friend requests');
+      const { data, error } = await ApiClient.getFriendRequests();
+      if (error) {
+        throw new Error(error);
       }
-      const data = await response.json();
-      if (Array.isArray(data)) {
-        // Filter friend requests to only show pending ones
+      if (data) {
         const pendingRequests = data.filter(request => request.status === 'pending');
         setFriendRequests(pendingRequests);
       } else {
@@ -111,81 +90,59 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
     }
   };
 
-  const handleAddFriend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newFriendUsername) return;
-
+  const handleAddFriend = async (friendId: number) => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/friends/request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({ username: newFriendUsername }),
-      });
-
-      if (response.ok) {
-        setNewFriendUsername('');
-        alert('Friend request sent!');
-      } else {
-        const errorData = await response.json();
-        alert(errorData.error || 'Failed to send friend request');
+      const { error } = await ApiClient.sendFriendRequest(friendId);
+      
+      if (error) {
+        console.error('API returned error:', error);
+        setError(error);
+        throw new Error(error);
       }
+      
+      // Show success message in a non-error state
     } catch (error) {
       console.error('Error sending friend request:', error);
-      alert('Error sending friend request');
+      setError(error instanceof Error ? error.message : 'Unknown error occurred');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleFriendRequest = async (friendId: number, status: 'accepted' | 'declined') => {
+    setError(null);
     try {
-      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/friends/respond', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({ friend_id: friendId, status }),
-      });
-
-      if (response.ok) {
-        fetchFriendRequests();
-        if (status === 'accepted') {
-          fetchFriends();
-        }
-      } else {
-        const errorData = await response.json();
-        alert(errorData.error || 'Failed to respond to friend request');
+      const { error } = await ApiClient.respondToFriendRequest(friendId, status);
+      if (error) {
+        throw new Error(error);
+      }
+      fetchFriendRequests();
+      if (status === 'accepted') {
+        fetchFriends();
       }
     } catch (error) {
       console.error('Error responding to friend request:', error);
-      alert('Error responding to friend request');
+      setError('Error responding to friend request');
     }
   };
 
   const handleRemoveFriend = async (friendId: number) => {
+    setLoading(true);
+    setError(null);
     try {
-      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/friends', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({ friend_id: friendId }),
-      });
-
-      if (response.ok) {
-        fetchFriends();
-      } else {
-        const errorData = await response.json();
-        alert(errorData.error || 'Failed to remove friend');
+      const { error } = await ApiClient.deleteFriend(friendId);
+      if (error) {
+        throw new Error(error);
       }
+      fetchFriends();
+      // set the list of friends, but remove this friendId
     } catch (error) {
       console.error('Error removing friend:', error);
-      alert('Error removing friend');
+      setError('Error removing friend');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -202,7 +159,7 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
           <h2 className="text-2xl font-bold text-white">Friends</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white"
+            className="text-gray-400 hover:text-white cursor-pointer"
           >
             <FaTimes size={24} />
           </button>
@@ -217,7 +174,7 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
         <div className="flex space-x-4 mb-4">
           <button
             onClick={() => setActiveTab('friends')}
-            className={`px-4 py-2 rounded-lg ${
+            className={`px-4 py-2 rounded-lg cursor-pointer ${
               activeTab === 'friends'
                 ? 'bg-blue-600 text-white'
                 : 'bg-slate-700 text-gray-300'
@@ -227,7 +184,7 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
           </button>
           <button
             onClick={() => setActiveTab('requests')}
-            className={`px-4 py-2 rounded-lg ${
+            className={`px-4 py-2 rounded-lg cursor-pointer ${
               activeTab === 'requests'
                 ? 'bg-blue-600 text-white'
                 : 'bg-slate-700 text-gray-300'
@@ -237,23 +194,13 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
           </button>
           <button
             onClick={() => setActiveTab('discover')}
-            className={`px-4 py-2 rounded-lg ${
+            className={`px-4 py-2 rounded-lg cursor-pointer ${
               activeTab === 'discover'
                 ? 'bg-blue-600 text-white'
                 : 'bg-slate-700 text-gray-300'
             }`}
           >
             Discover
-          </button>
-          <button
-            onClick={() => setActiveTab('add')}
-            className={`px-4 py-2 rounded-lg ${
-              activeTab === 'add'
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-700 text-gray-300'
-            }`}
-          >
-            Add Friend
           </button>
         </div>
 
@@ -273,7 +220,7 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
                   </div>
                   <button
                     onClick={() => handleRemoveFriend(friend.user_id)}
-                    className="p-2 bg-red-600 rounded-lg hover:bg-red-700"
+                    className="p-2 bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer"
                   >
                     <FaTimes className="text-white" />
                   </button>
@@ -301,13 +248,13 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleFriendRequest(request.user_id, 'accepted')}
-                      className="p-2 bg-green-600 rounded-lg hover:bg-green-700"
+                      className="p-2 bg-green-600 rounded-lg hover:bg-green-700 cursor-pointer"
                     >
                       <FaCheck className="text-white" />
                     </button>
                     <button
                       onClick={() => handleFriendRequest(request.user_id, 'declined')}
-                      className="p-2 bg-red-600 rounded-lg hover:bg-red-700"
+                      className="p-2 bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer"
                     >
                       <FaX className="text-white" />
                     </button>
@@ -350,8 +297,9 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
                       </div>
                     </div>
                     <button
-                      onClick={() => handleAddFriend({ preventDefault: () => {} } as React.FormEvent)}
-                      className="p-2 bg-blue-600 rounded-lg hover:bg-blue-700"
+                      onClick={() => handleAddFriend(user.user_id)}
+                      disabled={loading}
+                      className="p-2 bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
                     >
                       <FaUserPlus className="text-white" />
                     </button>
@@ -364,7 +312,7 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
             </div>
           )}
 
-          {activeTab === 'add' && (
+          {/* {activeTab === 'add' && (
             <form onSubmit={handleAddFriend} className="space-y-4">
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-300">
@@ -388,7 +336,7 @@ export default function FriendsModal({ isOpen, onClose }: FriendsModalProps) {
                 <span>{loading ? 'Sending...' : 'Send Friend Request'}</span>
               </button>
             </form>
-          )}
+          )} */}
         </div>
       </div>
     </div>

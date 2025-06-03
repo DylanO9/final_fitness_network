@@ -1,42 +1,28 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useAuth } from "@/app/context/AuthContext";
 import EditExerciseModal from "@/app/components/editExerciseModal";
-import { motion } from 'framer-motion';
-
-interface Exercise {
-    exercise_id: number;
-    user_id: number;
-    exercise_name: string;
-    description: string;
-    exercise_category: string;
-}
+import ApiClient, { Exercise } from '../../../utils/apiClient';
 
 export default function Exercises() {
     const auth = useAuth();
     const user = auth?.user;
-    const [exercises, setExercises] = useState<Exercise []>([]);
+    const [exercises, setExercises] = useState<Exercise[]>([]);
     const [triggerRefresh, setTriggerRefresh] = useState(false);
     const [editExercise, setEditExercise] = useState<Exercise>();
     const [openEditModal, setOpenEditModal] = useState(false);
 
     useEffect(() => {
-        // Fetch the list of exercises from the server
         const fetchExercises = async () => {
             try {
-                const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/exercises/all', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                } 
-                const data = await response.json();
-                setExercises(data);
+                const { data, error } = await ApiClient.getAllExercises();
+                if (error) {
+                    throw new Error(error);
+                }
+                if (data) {
+                    setExercises(data);
+                }
             } catch (error) {
                 console.error("Error fetching exercises:", error);
             }
@@ -44,37 +30,25 @@ export default function Exercises() {
         fetchExercises();
     }, [triggerRefresh]);
 
-    const handleCreateExercise = async (e: React.FormEvent) => {
+    const handleCreateExercise = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const formData = new FormData(e.currentTarget as HTMLFormElement);
-        const exercise_name = formData.get('exercise_name') as string;
-        const description = formData.get('description') as string;
-        const exercise_category = formData.get('exercise_category') as string;
-        const exercise = {
-            exercise_name,
-            description,
-            exercise_category
+        const formData = new FormData(e.currentTarget);
+        const exerciseData = {
+            exercise_name: formData.get('exercise_name') as string,
+            description: formData.get('description') as string,
+            exercise_category: formData.get('exercise_category') as string,
         };
 
         try {
-            console.log("Creating exercise:", JSON.stringify(exercise));
-            const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/exercises/no-workout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify(exercise),
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            const { data, error } = await ApiClient.createExercise(exerciseData);
+            if (error) {
+                throw new Error(error);
             }
-
-            const data = await response.json();
-            console.log("Exercise created:", data);
-            setTriggerRefresh(!triggerRefresh);
+            if (data) {
+                console.log("Exercise created:", data);
+                setTriggerRefresh(!triggerRefresh);
+            }
         } catch (error) {
             console.error("Error creating exercise:", error);
         }
@@ -93,17 +67,11 @@ export default function Exercises() {
 
     const handleDeleteExercise = async (exercise_id: number) => {
         try {
-            const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/exercises/${exercise_id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            const { error } = await ApiClient.deleteExercise(exercise_id);
+            if (error) {
+                throw new Error(error);
             }
-            setExercises(exercises.filter((exercise: Exercise) => exercise.exercise_id !== exercise_id));
+            setExercises(exercises.filter((exercise) => exercise.exercise_id !== exercise_id));
         } catch (error) {
             console.error("Error deleting exercise:", error);
         }
@@ -111,21 +79,14 @@ export default function Exercises() {
 
     return (
         <div className="w-full">
-            <motion.h1 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-3xl font-bold mb-8 text-white"
-            >
+            <h1 className="text-3xl font-bold mb-8 text-white">
                 Exercises
-            </motion.h1>
+            </h1>
 
             {/* Form to create a new exercise */}
-            <motion.form 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+            <form 
                 className="w-full bg-slate-800 mx-auto flex items-center flex-col p-6 border border-slate-700 shadow-lg rounded-xl mb-10" 
-                onSubmit={(e) => {handleCreateExercise(e)}}
+                onSubmit={handleCreateExercise}
             >
                 <h2 className="font-semibold text-xl mb-6 text-white">Add an Exercise</h2>
                 <div className="w-full space-y-4">
@@ -175,14 +136,10 @@ export default function Exercises() {
                         Add Exercise
                     </button>
                 </div>
-            </motion.form>
+            </form>
 
             {/* Table for displaying all exercises owned */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-            >
+            <div>
                 {exercises.length > 0 ? (
                     <div className="overflow-x-auto">
                         <table className="w-full border-collapse">
@@ -229,7 +186,7 @@ export default function Exercises() {
                 ) : (
                     <p className="text-slate-300 text-center mt-8">No exercises found.</p>
                 )}
-            </motion.div>
+            </div>
 
             {openEditModal && editExercise && (
                 <EditExerciseModal exercise={editExercise} setOpenEditModal={setOpenEditModal}/>

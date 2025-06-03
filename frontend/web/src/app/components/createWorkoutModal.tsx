@@ -1,14 +1,8 @@
+'use client';
 import { useState } from "react";
 import AddExerciseModal from "./addExerciseModal";
 import { motion } from 'framer-motion';
-
-interface Exercise {
-    exercise_id: number;
-    user_id: number;
-    exercise_name: string;
-    description: string;
-    exercise_category: string;
-}
+import ApiClient, { Exercise } from '@/utils/apiClient';
 
 interface Workout {
     workout_id: number;
@@ -22,7 +16,7 @@ interface CreateWorkoutModalProps {
     setWorkouts: (value: Workout[]) => void;
 }
 
-export default function CreateWorkoutModal({ setCreatingWorkout}: CreateWorkoutModalProps) {
+export default function CreateWorkoutModal({ setCreatingWorkout }: CreateWorkoutModalProps) {
     const [addExercises, setAddExercises] = useState(false);
     const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
     const [workoutName, setWorkoutName] = useState("");
@@ -34,48 +28,33 @@ export default function CreateWorkoutModal({ setCreatingWorkout}: CreateWorkoutM
         let workout_id = null;
         setLoading(true);
         try {
-            const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/workouts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({
-                    workout_name: workoutName,
-                    workout_category: workoutCategory,
-                }),
+            const { data, error } = await ApiClient.createWorkout({
+                workout_name: workoutName,
+                workout_category: workoutCategory,
             });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            if (error) {
+                throw new Error(error);
             }
-            const data = await response.json();
-            console.log(data);
-            workout_id = data.workout_id;
+            if (data) {
+                workout_id = data.workout_id;
+            }
         } catch (error) {
             console.error("Error creating workout:", error);
         }
 
         // Add exercises to the workout
-        try {
-            const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/exercises/add-existing-exercises', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({
-                    workout_id: workout_id,
-                    exercise_ids: selectedExercises.map((exercise) => exercise.exercise_id),
-                }),
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        if (workout_id) {
+            try {
+                const { error } = await ApiClient.addExercisesToWorkout(
+                    workout_id,
+                    selectedExercises.map((exercise) => exercise.exercise_id)
+                );
+                if (error) {
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error("Error adding exercises to workout:", error);
             }
-            const data = await response.json();
-            console.log(data);
-        }
-        catch (error) {
-            console.error("Error adding exercises to workout:", error);
         }
         setLoading(false);
 
