@@ -139,7 +139,7 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditWork
                             <button 
                                 type="button"
                                 onClick={() => setAddExercises(true)} 
-                                className="w-full border border-slate-700 rounded-lg py-2 px-4 text-slate-300 hover:bg-slate-700 transition-colors duration-300"
+                                className="cursor-pointer w-full border border-slate-700 rounded-lg py-2 px-4 text-slate-300 hover:bg-slate-700 transition-colors duration-300"
                             >
                                 + Add Exercises
                             </button>
@@ -164,7 +164,7 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditWork
                                                         e.preventDefault();
                                                         setExercises(exercises.filter((current_exercise) => current_exercise.exercise_id !== exercise.exercise_id));
                                                     }} 
-                                                    className="bg-red-500 text-white rounded-lg py-1 px-3 text-sm hover:bg-red-600 transition-colors duration-300"
+                                                    className="cursor-pointer bg-red-500 text-white rounded-lg py-1 px-3 text-sm hover:bg-red-600 transition-colors duration-300"
                                                 >
                                                     Remove
                                                 </button>
@@ -178,13 +178,13 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditWork
                                 <button 
                                     type="button"
                                     onClick={handleCancel} 
-                                    className="border border-slate-700 rounded-lg py-2 px-6 text-slate-300 hover:bg-slate-700 transition-colors duration-300"
+                                    className="cursor-pointer border border-slate-700 rounded-lg py-2 px-6 text-slate-300 hover:bg-slate-700 transition-colors duration-300"
                                 >
                                     Cancel
                                 </button>
                                 <button 
                                     type="submit" 
-                                    className="bg-blue-600 text-white rounded-lg py-2 px-6 hover:bg-blue-700 transition-colors duration-300"
+                                    className="cursor-pointer bg-blue-600 text-white rounded-lg py-2 px-6 hover:bg-blue-700 transition-colors duration-300"
                                 >
                                     Save Changes
                                 </button>

@@ -131,13 +131,13 @@ export default function AddExerciseModal({ setAddExercises, selectedExercises, s
                     <div className="flex justify-end space-x-4 pt-4 border-t border-slate-700">
                         <button 
                             onClick={handleCancel} 
-                            className="border border-slate-700 rounded-lg py-2 px-6 text-slate-300 hover:bg-slate-700 transition-colors duration-300"
+                            className="cursor-pointer border border-slate-700 rounded-lg py-2 px-6 text-slate-300 hover:bg-slate-700 transition-colors duration-300"
                         >
                             Cancel
                         </button>
                         <button 
                             onClick={handleAddExercises} 
-                            className="bg-blue-600 text-white rounded-lg py-2 px-6 hover:bg-blue-700 transition-colors duration-300"
+                            className="cursor-pointer bg-blue-600 text-white rounded-lg py-2 px-6 hover:bg-blue-700 transition-colors duration-300"
                         >
                             Add to Workout
                         </button>

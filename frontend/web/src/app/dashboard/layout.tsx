@@ -36,7 +36,7 @@ export default function DashboardLayout({
           <span className="font-bold text-blue-500">Fitness Hub</span>
           <button
             onClick={() => setIsFriendsModalOpen(true)}
-            className="text-blue-500 hover:text-blue-400 transition-colors"
+            className="cursor-pointer text-blue-500 hover:text-blue-400 transition-colors"
           >
             <FaUsers className="text-2xl" />
           </button>
