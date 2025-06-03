@@ -104,7 +104,7 @@ export default function Signup () {
                         type="text"
                         placeholder="************"
                     />
-                    <button type="submit" className="w-full p-2 rounded-md bg-blue-600 hover:bg-blue-700 mb-2 text-white" disabled={loading}>Sign up</button>
+                    <button type="submit" className="cursor-pointer w-full p-2 rounded-md bg-blue-600 hover:bg-blue-700 mb-2 text-white" disabled={loading}>Sign up</button>
                     <p className="text-sm text-gray-400">
                         Already have an account?{" "}
                         <Link href="/login" className="text-blue-600 hover:text-blue-500 hover:underline font-medium">

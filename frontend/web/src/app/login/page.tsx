@@ -94,7 +94,7 @@ export default function Login () {
                         type="text"
                         placeholder="************"
                     />
-                    <button type="submit" className="w-full p-2 rounded-md bg-blue-600 hover:bg-blue-700 mb-2 text-white" disabled={loading}>Log In</button>
+                    <button type="submit" className="cursor-pointer w-full p-2 rounded-md bg-blue-600 hover:bg-blue-700 mb-2 text-white" disabled={loading}>Log In</button>
                     <p className="text-sm text-gray-400">
                         Don&apos;t have an account?{" "}
                         <Link href="/signup" className="text-blue-600 hover:text-blue-500 hover:underline font-medium">

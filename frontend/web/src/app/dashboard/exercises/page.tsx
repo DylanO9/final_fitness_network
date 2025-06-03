@@ -115,7 +115,7 @@ export default function Exercises() {
                         <select
                             id="exercise_category"
                             name="exercise_category"
-                            className="border border-slate-700 bg-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors duration-300"
+                            className="cursor-pointer border border-slate-700 bg-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors duration-300"
                         >
                             <option value="legs">Legs</option>
                             <option value="back">Back</option>
@@ -166,13 +166,13 @@ export default function Exercises() {
                                         <td className="border border-slate-700 px-6 py-4 text-center">-</td>
                                         <td className="border border-slate-700 px-6 py-4 text-center space-x-2">
                                             <button 
-                                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300" 
+                                                className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300" 
                                                 onClick={() => {handleOpenEditModal(exercise.exercise_id, exercise.exercise_name, exercise.description, exercise.exercise_category)}}
                                             >
                                                 Edit
                                             </button>
                                             <button 
-                                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-300" 
+                                                className="cursor-pointer bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-300" 
                                                 onClick={() => {handleDeleteExercise(exercise.exercise_id)}}
                                             >
                                                 Delete

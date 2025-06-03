@@ -171,7 +171,7 @@ export default function Messages() {
           <h2 className="text-xl font-bold text-white">Chats</h2>
           <button
             onClick={() => setIsNewChatModalOpen(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300"
+            className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300"
           >
             New Chat
           </button>
