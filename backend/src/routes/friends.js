@@ -31,19 +31,11 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-router.get('/request'), authenticateToken, async (req, res) => {
+// Get friend requests
+router.get('/request', authenticateToken, async (req, res) => {
   try {
     // Query where user_id is the current user
     const result1 = await pool.query(
-      `SELECT u.user_id, u.username, u.avatar_url, f.status
-       FROM Friends f
-       INNER JOIN Users u ON (f.friend_id = u.user_id)
-       WHERE f.user_id = $1 AND f.status = 'pending'`,
-      [req.user.user_id]
-    );
-
-    // Query where friend_id is the current user
-    const result2 = await pool.query(
       `SELECT u.user_id, u.username, u.avatar_url, f.status
        FROM Friends f
        INNER JOIN Users u ON (f.user_id = u.user_id)
@@ -52,12 +44,12 @@ router.get('/request'), authenticateToken, async (req, res) => {
     );
 
     // Combine both results
-    const allFriends = [...result1.rows, ...result2.rows];
+    const allFriends = [...result1.rows];
     res.json(allFriends);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};
+});
 
 // Send friend request
 router.post('/request', authenticateToken, async (req, res) => {
@@ -82,9 +74,6 @@ router.post('/request', authenticateToken, async (req, res) => {
       [req.user.user_id, friend_id]
     );
 
-    if (result.rows.length > 0) {
-      return res.status(400).json({ error: 'Can not send them a friend request because it already exists' });
-    }
     res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -125,8 +114,8 @@ router.put('/respond', authenticateToken, async (req, res) => {
   }
 });
 
-router.delete('/', authenticateToken, async (req, res) => {
-  const { friend_id } = req.body;
+router.delete('/:friend_id', authenticateToken, async (req, res) => {
+  const { friend_id } = req.params;
   try {
     // Try deleting where the current user is the sender
     const result1 = await pool.query(
