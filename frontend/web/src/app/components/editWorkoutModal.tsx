@@ -1,29 +1,16 @@
+'use client';
 import { useState, useEffect } from "react";
 import AddExerciseModal from "./addExerciseModal";
 import { motion } from 'framer-motion';
+import ApiClient, { Exercise, Workout } from '@/utils/apiClient';
 
-interface Exercise {
-    exercise_id: number;
-    user_id: number;
-    exercise_name: string;
-    description: string;
-    exercise_category: string;
-}
-
-interface EditExerciseModalProps {
+interface EditWorkoutModalProps {
     editingExercise: boolean;
     setEditingExercise: (value: boolean) => void;
     workout: Workout;
 }
 
-interface Workout {
-    workout_id: number;
-    user_id: number;
-    workout_name: string;
-    workout_category: string;
-}
-
-export default function EditWorkoutModal({setEditingExercise, workout}: EditExerciseModalProps) {
+export default function EditWorkoutModal({setEditingExercise, workout}: EditWorkoutModalProps) {
     const [workoutName, setWorkoutName] = useState(workout.workout_name);
     const [workoutCategory, setWorkoutCategory] = useState(workout.workout_category);
     const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -34,18 +21,13 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditExer
         setLoading(true);
         const fetchExercises = async () => {
             try {
-                const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/exercises/?workout_id=${workout.workout_id}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                const { data, error } = await ApiClient.getExercisesByWorkout(workout.workout_id);
+                if (error) {
+                    throw new Error(error);
                 }
-                const data = await response.json();
-                setExercises(data);
+                if (data) {
+                    setExercises(data);
+                }
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 setLoading(false);
             } catch (error) {
@@ -75,38 +57,24 @@ export default function EditWorkoutModal({setEditingExercise, workout}: EditExer
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/workouts/?workout_id=${workout.workout_id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({
-                    workout_name: workoutName,
-                    workout_category: workoutCategory,
-                }),
+            const { error } = await ApiClient.updateWorkout(workout.workout_id, {
+                workout_name: workoutName,
+                workout_category: workoutCategory,
             });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            if (error) {
+                throw new Error(error);
             }
         } catch (error) {
             console.error("Error updating workout:", error);
         }
 
         try {
-            const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/exercises/update-exercises`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({
-                    workout_id: workout.workout_id,
-                    exercise_ids: exercises.map((exercise) => exercise.exercise_id),
-                }),
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            const { error } = await ApiClient.updateWorkoutExercises(
+                workout.workout_id,
+                exercises.map((exercise) => exercise.exercise_id)
+            );
+            if (error) {
+                throw new Error(error);
             }
         } catch (error) {
             console.error("Error updating exercises:", error);

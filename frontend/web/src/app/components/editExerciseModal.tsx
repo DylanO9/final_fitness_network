@@ -1,16 +1,10 @@
+'use client';
 import { useState, useEffect } from "react";
+import ApiClient, { Exercise } from '@/utils/apiClient';
 
 interface EditExerciseModalProps {
     exercise: Exercise;
     setOpenEditModal: (value: boolean) => void;
-}
-
-interface Exercise {
-    exercise_id: number;
-    user_id: number;
-    exercise_name: string;
-    description: string;
-    exercise_category: string;
 }
 
 export default function EditExerciseModal({ exercise, setOpenEditModal }: EditExerciseModalProps) {
@@ -25,20 +19,13 @@ export default function EditExerciseModal({ exercise, setOpenEditModal }: EditEx
     const handleExerciseEdit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/exercises/?exercise_id=${exercise.exercise_id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                    body: JSON.stringify({
-                        exercise_name: exerciseName,
-                        description: exerciseDescription,
-                        exercise_category: exerciseCategory
-                }),
+            const { error } = await ApiClient.updateExercise(exercise.exercise_id, {
+                exercise_name: exerciseName,
+                description: exerciseDescription,
+                exercise_category: exerciseCategory
             });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            if (error) {
+                throw new Error(error);
             }
         } catch (error) {
             console.error("Error updating exercise:", error);

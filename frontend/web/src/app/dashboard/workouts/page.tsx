@@ -3,13 +3,7 @@ import { useState, useEffect } from "react";
 import CreateWorkoutModal from "../..//components/createWorkoutModal";
 import EditWorkoutModal from "@/app/components/editWorkoutModal";
 import { motion } from 'framer-motion';
-
-interface Workout {
-    workout_id: number;
-    user_id: number;
-    workout_name: string;
-    workout_category: string;
-}
+import ApiClient, { Workout } from '@/utils/apiClient';
 
 export default function Workouts () {
     const [creatingWorkout, setCreatingWorkout] = useState(false)
@@ -18,24 +12,15 @@ export default function Workouts () {
     const [workouts, setWorkouts] = useState<Workout []>([]);
 
     useEffect(() => {
-        // Fetch the list of workouts from the server
         const fetchWorkouts = async () => {
             try {
-                const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/workouts', 
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        },
-                    }
-                );
-                console.log(localStorage.getItem('token'));
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                const { data, error } = await ApiClient.getAllWorkouts();
+                if (error) {
+                    throw new Error(error);
                 }
-                const data = await response.json();
-                setWorkouts(data);
+                if (data) {
+                    setWorkouts(data);
+                }
             } catch (error) {
                 console.error("Error fetching workouts:", error);
             }
@@ -45,17 +30,11 @@ export default function Workouts () {
 
     const handleDeleteWorkout = async (workout_id: number) => {
         try {
-            const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/workouts/${workout_id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            const { error } = await ApiClient.deleteWorkout(workout_id);
+            if (error) {
+                throw new Error(error);
             }
-            setWorkouts(workouts.filter((workout: Workout) => workout.workout_id !== workout_id));
+            setWorkouts(workouts.filter((workout) => workout.workout_id !== workout_id));
         } catch (error) {
             console.error("Error deleting workout:", error);
         }

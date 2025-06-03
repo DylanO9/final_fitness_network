@@ -4,32 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/app/context/AuthContext';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-
-interface Message {
-  message_id: number;
-  sender_id: number;
-  receiver_id: number;
-  message_text: string;
-  message?: string;
-  sent_at: string;
-  username: string;
-  avatar_url: string;
-}
-
-interface Conversation {
-  user_id: number;
-  username: string;
-  avatar_url: string;
-  last_message: string;
-  last_message_time: string;
-}
-
-interface Friend {
-  user_id: number;
-  username: string;
-  avatar_url: string;
-  status: string;
-}
+import ApiClient, { Friend, Message, Conversation } from '../../../utils/apiClient';
 
 export default function Messages() {
   const socketRef = useRef<Socket | null>(null);
@@ -54,7 +29,7 @@ export default function Messages() {
 
   useEffect(() => {
     // Initialize socket connection
-    socketRef.current = io('https://fitness-network-backend-lcuf.onrender.com', {
+    socketRef.current = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001', {
       auth: {
         token: localStorage.getItem('token')
       }
@@ -109,13 +84,13 @@ export default function Messages() {
 
   const fetchConversations = async () => {
     try {
-      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/messages/conversations', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await response.json();
-      setConversations(data);
+      const { data, error } = await ApiClient.getConversations();
+      if (error) {
+        throw new Error(error);
+      }
+      if (data) {
+        setConversations(data);
+      }
     } catch (error) {
       console.error('Error fetching conversations:', error);
     }
@@ -123,13 +98,13 @@ export default function Messages() {
 
   const fetchFriends = async () => {
     try {
-      const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/friends', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await response.json();
-      setFriends(data);
+      const { data, error } = await ApiClient.getAllFriends();
+      if (error) {
+        throw new Error(error);
+      }
+      if (data) {
+        setFriends(data);
+      }
     } catch (error) {
       console.error('Error fetching friends:', error);
     }
@@ -138,19 +113,14 @@ export default function Messages() {
   const loadChat = async (conversation: Conversation) => {
     setSelectedUser(conversation);
     try {
-      const response = await fetch(`https://fitness-network-backend-lcuf.onrender.com/api/messages/${conversation.user_id}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to load chat');
+      const { data, error } = await ApiClient.getMessagesByUser(conversation.user_id);
+      if (error) {
+        throw new Error(error);
       }
-      
-      const data = await response.json();
-      console.log('Loaded chat data:', data);
-      setCurrentChat(data);
+      if (data) {
+        console.log('Loaded chat data:', data);
+        setCurrentChat(data);
+      }
     } catch (error) {
       console.error('Error loading chat:', error);
     }

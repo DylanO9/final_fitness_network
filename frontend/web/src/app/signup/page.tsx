@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react"
 import { useRouter } from 'next/navigation';
 import { useAuth } from "../context/AuthContext";
+import ApiClient from "../../utils/apiClient";
 
 export default function Signup () {
     const router = useRouter();
@@ -14,54 +15,41 @@ export default function Signup () {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
-      };
+    };
     
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(false);
         setLoading(true);
+
         try {
-            const response = await fetch('https://fitness-network-backend-lcuf.onrender.com/api/users/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form),
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            } 
-            const data = await response.json();
-    
-            // Save the JWT token to local storage
-            localStorage.setItem('token', data.token);
-
-            // Call the login function from AuthContext
-            if (login) {
-                login(data.user);
+            const { data, error } = await ApiClient.signup(form.email, form.username, form.password);
+            
+            if (error) {
+                throw new Error(error);
             }
-    
-            if (data.error) {
-                setError(true);
+
+            if (data) {
+                // Save the JWT token to local storage
+                localStorage.setItem('token', data.token);
+
+                // Call the login function from AuthContext
+                if (login) {
+                    login(data.user);
+                }
+
+                // Add a one second delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 setLoading(false);
-                return;
+
+                // Redirect to dashboard
+                router.push('/dashboard');
             }
-            // Handle success state here
-            console.log('Signup successful:', data);
-
-            // Add a one second delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            setLoading(false);
-
-            // Optionally redirect or update UI
-            router.push('/dashboard');
-        }
-        catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
+        } catch (error) {
+            console.error('Signup failed:', error);
             setError(true);
             setLoading(false);
-            return;
         }
-        setLoading(false);
     };
     
     if (loading) {
