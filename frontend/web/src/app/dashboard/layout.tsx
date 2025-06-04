@@ -1,7 +1,7 @@
 'use client';
 import "../globals.css";
 import Link from "next/link";
-import { FaHome, FaDumbbell, FaEnvelope, FaSignOutAlt, FaBars, FaUsers } from "react-icons/fa";
+import { FaHome, FaDumbbell, FaEnvelope, FaSignOutAlt, FaBars, FaUsers, FaCalendarAlt } from "react-icons/fa";
 import { AuthProvider } from "../context/AuthContext";
 import { useState } from "react";
 import FriendsModal from "./components/FriendsModal";
@@ -20,7 +20,7 @@ export default function DashboardLayout({
     // { name: "Feed", link: "/dashboard/feed", icon: <FaRss /> },
     { name: "Workouts", link: "/dashboard/workouts", icon: <FaDumbbell /> },
     { name: "Exercises", link: "/dashboard/exercises", icon: <FaDumbbell /> },
-    // { name: "Calendar", link: "/dashboard/calendar", icon: <FaCalendarAlt /> },
+    { name: "Calendar", link: "/dashboard/calendar", icon: <FaCalendarAlt /> },
     // { name: "Coaching", link: "/dashboard/coaching", icon: <FaChalkboardTeacher /> },
     { name: "Messages", link: "/dashboard/messages", icon: <FaEnvelope /> },
     { name: "Logout", link: "/", icon: <FaSignOutAlt /> },

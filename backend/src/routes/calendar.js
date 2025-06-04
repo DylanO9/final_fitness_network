@@ -31,6 +31,63 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/:date', authenticateToken, async (req, res) => {
+    const { date } = req.params;
+    try {
+        // First get the calendar entries with workout info
+        const calendarResult = await pool.query(
+            `SELECT ce.*, w.workout_name, w.workout_category
+             FROM Calendar_Entries ce
+             JOIN Workouts w ON ce.workout_id = w.workout_id
+             WHERE ce.user_id = $1 AND ce.workout_date = $2`,
+            [req.user.user_id, date]
+        );
+
+        // For each calendar entry, get its exercises and sets
+        const entriesWithExercises = await Promise.all(
+            calendarResult.rows.map(async (entry) => {
+                // First get all exercises for this workout
+                const exercisesResult = await pool.query(
+                    `SELECT e.exercise_id, e.exercise_name, e.exercise_category
+                     FROM Workout_Exercises we
+                     JOIN Exercises e ON we.exercise_id = e.exercise_id
+                     WHERE we.workout_id = $1`,
+                    [entry.workout_id]
+                );
+
+                // Then get sets and reps for each exercise
+                const exercisesWithSets = await Promise.all(
+                    exercisesResult.rows.map(async (exercise) => {
+                        const setsResult = await pool.query(
+                            `SELECT set_number, reps, weight, notes
+                             FROM Sets_Reps
+                             WHERE calendar_entry_id = $1 AND exercise_id = $2
+                             ORDER BY set_number`,
+                            [entry.calendar_entry_id, exercise.exercise_id]
+                        );
+
+                        return {
+                            exercise_id: exercise.exercise_id,
+                            exercise_name: exercise.exercise_name,
+                            exercise_category: exercise.exercise_category,
+                            sets_reps: setsResult.rows
+                        };
+                    })
+                );
+
+                return {
+                    ...entry,
+                    exercises: exercisesWithSets
+                };
+            })
+        );
+
+        res.json(entriesWithExercises);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 router.post('/:calendar_entry_id/sets-reps', authenticateToken, async (req, res) => {
     const { calendar_entry_id } = req.params;
     const { workout_id, exercise_id, set_number, reps, weight, notes } = req.body;

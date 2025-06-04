@@ -69,6 +69,48 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
+export interface CalendarEntryWithExercises {
+  calendar_entry_id: number;
+  user_id: number;
+  workout_id: number;
+  workout_date: string;
+  workout_name: string;
+  workout_category: string;
+  exercises: {
+    exercise_id: number;
+    exercise_name: string;
+    exercise_category: string;
+    sets_reps: {
+      set_number: number;
+      reps: number;
+      weight: number;
+      notes: string;
+    }[];
+  }[];
+}
+
+
+export interface CalendarEntry {
+  calendar_entry_id: number;
+  user_id: number;
+  workout_id: number;
+  date: string;
+  workout_name: string;
+  workout_category: string;
+}
+
+export interface SetRep {
+  set_rep_id: number;
+  calendar_entry_id: number;
+  workout_id: number;
+  exercise_id: number;
+  set_number: number;
+  reps: number;
+  weight: number;
+  notes: string;
+  created_at: string;
+}
+
 class ApiClient {
   private static async request<T>(
     endpoint: string,
@@ -227,6 +269,52 @@ class ApiClient {
   static async getMessagesByUser(userId: number): Promise<ApiResponse<Message[]>> {
     return this.request<Message[]>(API_ENDPOINTS.MESSAGES.BY_USER(userId));
   }
+
+  // Calendar endpoints
+  static async getCalendarEntries(): Promise<ApiResponse<CalendarEntry[]>> {
+    return this.request<CalendarEntry[]>(API_ENDPOINTS.CALENDAR.ENTRIES);
+  }
+  static async getCalendarEntriesByDate(date: string): Promise<ApiResponse<CalendarEntryWithExercises[]>> {
+    return this.request<CalendarEntryWithExercises[]>(API_ENDPOINTS.CALENDAR.BY_DATE(date));
+  }
+
+  static async addWorkoutToCalendar(date: string, workoutId: number): Promise<ApiResponse<CalendarEntry>> {
+    return this.request<CalendarEntry>(API_ENDPOINTS.CALENDAR.ADD_WORKOUT, {
+      method: 'POST',
+      body: JSON.stringify({ workout_date: date, workout_id: workoutId }),
+    });
+  }
+
+  static async getSetsAndReps(entryId: number): Promise<ApiResponse<SetRep[]>> {
+    return this.request<SetRep[]>(API_ENDPOINTS.CALENDAR.SETS_REPS(entryId));
+  }
+
+  static async addSetRep(entryId: number, setData: Partial<SetRep>): Promise<ApiResponse<SetRep>> {
+    return this.request<SetRep>(API_ENDPOINTS.CALENDAR.ADD_SET(entryId), {
+      method: 'POST',
+      body: JSON.stringify(setData),
+    });
+  }
+
+  static async updateSet(entryId: number, setId: number, setData: Partial<SetRep>): Promise<ApiResponse<SetRep>> {
+    return this.request<SetRep>(API_ENDPOINTS.CALENDAR.UPDATE_SET(entryId, setId), {
+      method: 'PUT',
+      body: JSON.stringify(setData),
+    });
+  }
+
+  static async deleteSet(entryId: number, setId: number): Promise<ApiResponse<void>> {
+    return this.request(API_ENDPOINTS.CALENDAR.DELETE_SET(entryId, setId), {
+      method: 'DELETE',
+    });
+  }
+
+  static async deleteWorkoutFromCalendar(entryId: number): Promise<ApiResponse<void>> {
+    return this.request(API_ENDPOINTS.CALENDAR.DELETE_WORKOUT_FROM_CALENDAR(entryId), {
+      method: 'DELETE',
+    });
+  }
+
 }
 
 export default ApiClient; 

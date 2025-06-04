@@ -43,4 +43,14 @@ export const API_ENDPOINTS = {
     CONVERSATIONS: '/api/messages/conversations',
     BY_USER: (userId: number) => `/api/messages/${userId}`,
   },
+  CALENDAR: {
+    ENTRIES: '/api/calendar',
+    BY_DATE: (date: string) => `/api/calendar/${date}`,
+    ADD_WORKOUT: '/api/calendar/',
+    SETS_REPS: (entryId: number) => `/api/calendar/${entryId}/sets-reps`,
+    ADD_SET: (entryId: number) => `/api/calendar/${entryId}/sets-reps`,
+    UPDATE_SET: (entryId: number, setId: number) => `/api/calendar/${entryId}/sets/${setId}`,
+    DELETE_SET: (entryId: number, setId: number) => `/api/calendar/${entryId}/sets/${setId}`,
+    DELETE_WORKOUT_FROM_CALENDAR: (entryId: number) => `/api/calendar/${entryId}`
+  },
 }; 
