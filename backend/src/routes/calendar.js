@@ -154,4 +154,72 @@ router.delete('/:calendar_entry_id', authenticateToken, async (req, res) => {
     }
 });
 
+router.put('/:calendar_entry_id/sets/:set_id', authenticateToken, async (req, res) => {
+    const { calendar_entry_id, set_id } = req.params;
+    const { reps, weight, notes } = req.body;
+
+    try {
+        // First verify the set belongs to the user's calendar entry
+        const verifyResult = await pool.query(
+            `SELECT sr.sets_reps_id 
+             FROM Sets_Reps sr
+             JOIN Calendar_Entries ce ON sr.calendar_entry_id = ce.calendar_entry_id
+             WHERE sr.sets_reps_id = $1 
+             AND ce.calendar_entry_id = $2 
+             AND ce.user_id = $3`,
+            [set_id, calendar_entry_id, req.user.user_id]
+        );
+
+        if (verifyResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Set not found or unauthorized' });
+        }
+
+        // Update the set
+        const result = await pool.query(
+            `UPDATE Sets_Reps 
+             SET reps = $1, weight = $2, notes = $3
+             WHERE sets_reps_id = $4
+             RETURNING *`,
+            [reps, weight, notes, set_id]
+        );
+
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.delete('/:calendar_entry_id/sets/:set_id', authenticateToken, async (req, res) => {
+    const { calendar_entry_id, set_id } = req.params;
+
+    try {
+        // First verify the set belongs to the user's calendar entry
+        const verifyResult = await pool.query(
+            `SELECT sr.sets_reps_id 
+             FROM Sets_Reps sr
+             JOIN Calendar_Entries ce ON sr.calendar_entry_id = ce.calendar_entry_id
+             WHERE sr.sets_reps_id = $1 
+             AND ce.calendar_entry_id = $2 
+             AND ce.user_id = $3`,
+            [set_id, calendar_entry_id, req.user.user_id]
+        );
+
+        if (verifyResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Set not found or unauthorized' });
+        }
+
+        // Delete the set
+        await pool.query(
+            `DELETE FROM Sets_Reps 
+             WHERE sets_reps_id = $1`,
+            [set_id]
+        );
+
+        res.json({ message: 'Set deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 module.exports = router;
